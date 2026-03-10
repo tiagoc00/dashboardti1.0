@@ -20,9 +20,9 @@
  */
 
 :root{
-      /* Paleta de cores */
-      --bg:#0d0807;--surface:#140e0b;--card:#1a1210;
-      --border:#2a1e18;--border2:#3d2a20;
+      /* Fundos grafite neutros e profundos para conforto visual */
+      --bg:#0A0A0C;--surface:#121214;--card:#18181A;
+      --border:#26262A;--border2:#333338;
       /* Red Velvet — primário / destaque principal */
       --cyan:#DA0D17;--cdim:rgba(218,13,23,.10);
       /* Pistache — verde/sucesso */
