@@ -170,11 +170,14 @@ async function removeAdmin(em) {
   } catch(e) { console.error(e); toast("Erro ao remover.", "error"); }
   finally { hideL(); }
 }
-document.getElementById("btn-manage-admins")?.addEventListener("click", () => {
-  document.getElementById("admins-modal").classList.add("show");
-  document.getElementById("adm-err").classList.remove("show");
-  document.getElementById("adm-input").value = "";
-  loadAdmins();
+document.addEventListener("click", e => {
+  const btn = e.target.closest("#btn-manage-admins");
+  if(btn) {
+    document.getElementById("admins-modal").classList.add("show");
+    document.getElementById("adm-err").classList.remove("show");
+    document.getElementById("adm-input").value = "";
+    loadAdmins();
+  }
 });
 document.getElementById("btn-close-admins")?.addEventListener("click", () => {
   document.getElementById("admins-modal").classList.remove("show");
