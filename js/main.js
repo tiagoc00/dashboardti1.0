@@ -204,11 +204,11 @@ function popFilters(){
 }
 
 /* CHART BASE */
-const GC="#1e2333",TC="#5a6482",FM="'IBM Plex Mono',monospace";
+const GC="#2a1e18",TC="#8a776a",FM="'IBM Plex Mono',monospace";
 const bOpts=(ex={})=>({responsive:true,maintainAspectRatio:false,
-  plugins:{legend:{labels:{color:TC,font:{family:FM,size:11}}},tooltip:{backgroundColor:"#131720",borderColor:"#2a3148",borderWidth:1,titleColor:"#dde3f0",bodyColor:"#9ca3b8",titleFont:{family:FM}}},
+  plugins:{legend:{labels:{color:TC,font:{family:FM,size:11}}},tooltip:{backgroundColor:"#1a1210",borderColor:"#3d2a20",borderWidth:1,titleColor:"#E8E1D0",bodyColor:"#8a776a",titleFont:{family:FM}}},
   scales:{x:{ticks:{color:TC,font:{size:11}},grid:{color:GC}},y:{ticks:{color:TC,font:{size:11}},grid:{color:GC}}},...ex});
-const BC=["#00e5ff","#00bcd4","#26c6da","#448aff","#7c4dff","#9575cd","#ba68c8","#f06292","#00e676","#ffc400"];
+const BC=["#DA0D17","#DA5513","#4F7043","#265D7C","#56331B","#F29C94","#c20b13","#b8450f","#3d5834","#1e4a61","#8B4513"];
 
 /* KPIS */
 function renderKPIs(ch,cs){

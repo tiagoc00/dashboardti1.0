@@ -20,19 +20,30 @@
  */
 
 :root{
-      --bg:#07090f;--surface:#0e1118;--card:#131720;
-      --border:#1e2333;--border2:#2a3148;
-      --cyan:#00e5ff;--cdim:rgba(0,229,255,.10);
-      --green:#00e676;--amber:#ffc400;--red:#ff5252;
-      --blue:#448aff;--purple:#7c4dff;
-      --text:#dde3f0;--muted:#5a6482;
+      /* Paleta de cores */
+      --bg:#0d0807;--surface:#140e0b;--card:#1a1210;
+      --border:#2a1e18;--border2:#3d2a20;
+      /* Red Velvet — primário / destaque principal */
+      --cyan:#DA0D17;--cdim:rgba(218,13,23,.10);
+      /* Pistache — verde/sucesso */
+      --green:#4F7043;
+      /* Laranja — alerta/secundário */
+      --amber:#DA5513;
+      /* Morango — erro/vermelho suave */
+      --red:#F29C94;
+      /* Ao Leite — azul/info */
+      --blue:#265D7C;
+      /* Cafézinho — purple/detalhe */
+      --purple:#56331B;
+      /* Ninho — texto principal */
+      --text:#E8E1D0;--muted:#8a776a;
       --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:radial-gradient(ellipse 70% 50% at 15% 10%,rgba(0,229,255,.04) 0%,transparent 60%),
-                 radial-gradient(ellipse 60% 40% at 85% 85%,rgba(68,138,255,.04) 0%,transparent 60%)}
+      background:radial-gradient(ellipse 70% 50% at 15% 10%,rgba(218,13,23,.05) 0%,transparent 60%),
+                 radial-gradient(ellipse 60% 40% at 85% 85%,rgba(218,85,19,.04) 0%,transparent 60%)}
 
     /* LOGIN */
     #login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg)}
@@ -48,7 +59,7 @@
     .field label{font-size:11px;color:var(--muted);letter-spacing:.5px}
     .field input{background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s}
     .field input:focus{border-color:var(--cyan)}
-    .btn-login{width:100%;margin-top:8px;background:var(--cyan);color:#07090f;border:none;border-radius:8px;padding:13px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .btn-login{width:100%;margin-top:8px;background:var(--cyan);color:#E8E1D0;border:none;border-radius:8px;padding:13px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
     .btn-login:hover{opacity:.85;transform:translateY(-1px)}
     .btn-login:disabled{opacity:.4;cursor:not-allowed;transform:none}
     .lerr{background:rgba(255,82,82,.1);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:12px;padding:10px 14px;margin-top:12px;display:none}
@@ -89,7 +100,7 @@
     .uztitle{font-size:11px;font-weight:600;color:var(--text)}
     .uzsub{font-size:10px;color:var(--muted);margin-top:2px}
     .uzone.hasfile{border-color:var(--green);background:rgba(0,230,118,.05)}
-    .btn-primary{background:var(--cyan);color:#07090f;border:none;border-radius:8px;padding:10px 16px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:all .2s}
+    .btn-primary{background:var(--cyan);color:#E8E1D0;border:none;border-radius:8px;padding:10px 16px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:all .2s}
     .btn-primary:hover{opacity:.85;transform:translateY(-1px)}
     .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
     .fgroup{display:flex;flex-direction:column;gap:5px}
@@ -177,7 +188,7 @@
     #toast.info{border-color:var(--cyan)}
 
     /* LOADING */
-    #loading{position:fixed;inset:0;background:rgba(7,9,15,.88);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:14px}
+    #loading{position:fixed;inset:0;background:rgba(13,8,7,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:14px}
     #loading.show{display:flex}
     .spinner{width:38px;height:38px;border:3px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
