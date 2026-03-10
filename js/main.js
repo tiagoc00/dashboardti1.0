@@ -334,9 +334,22 @@ document.getElementById("btn-reset").addEventListener("click",()=>{["fat","fst",
 document.querySelectorAll(".tabbtn").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tabbtn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");S.tab=btn.dataset.tab;document.getElementById("tsearch").value="";renderTable()}));
 document.getElementById("tsearch").addEventListener("input",e=>renderTable(e.target.value));
 
-/* INIT */
-window.addEventListener("firebase-ready",()=>{
-  const b=document.getElementById("fbbadge");b.className="fbbadge connected";b.querySelector(".fbdot").classList.remove("pulse");document.getElementById("fbstatus").textContent="Firebase Conectado";
-  S.firebaseOk=true;setupAuth();
-});
-setTimeout(()=>{if(!S.firebaseOk){document.getElementById("fbbadge").className="fbbadge disconnected";document.getElementById("fbstatus").textContent="Desconectado";hideL()}},8000);
+/* INIT — usa polling para evitar race condition com firebase.js */
+const _initPoll = setInterval(()=>{
+  if(!window.__FB) return;
+  clearInterval(_initPoll);
+  const b=document.getElementById("fbbadge");
+  b.className="fbbadge connected";
+  b.querySelector(".fbdot").classList.remove("pulse");
+  document.getElementById("fbstatus").textContent="Firebase Conectado";
+  S.firebaseOk=true;
+  setupAuth();
+}, 50);
+setTimeout(()=>{
+  if(!S.firebaseOk){
+    clearInterval(_initPoll);
+    document.getElementById("fbbadge").className="fbbadge disconnected";
+    document.getElementById("fbstatus").textContent="Desconectado";
+    hideL();
+  }
+}, 10000);
