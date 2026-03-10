@@ -52,8 +52,8 @@ function setupAuth(){
       const btn = document.getElementById("btn-login");
       if(btn) { btn.disabled=false; btn.innerHTML="Entrar &#x2192;"; }
       
-      showL("Conta validada! Sincronizando chamados do banco...");
-      // Fire and forget data loading so we can hide the login screen immediately
+      hideL(); // Esconde a tela escura de loading para liberar a interface
+      
       loadFromFB();
     }else{
       S.user=null;
@@ -166,15 +166,13 @@ async function loadFBColl(name){
 }
 
 async function loadFromFB(){
-  // Only change the loading message if it hasn't been set by setupAuth
-  const lmsg = document.getElementById("lmsg").textContent;
-  if (!lmsg.includes("Conta validada!")) { showL("Sincronizando banco de dados..."); }
+  toast("Sincronizando banco de dados...", "info");
   
   try{
     const[rch,rcs]=await Promise.all([loadFBColl("chamados"),loadFBColl("satisfacao")]);
-    if(rch.length||rcs.length){S.chamados=processRel(rch);S.satisfacao=rcs;popFilters();renderAll();toast(`${rch.length.toLocaleString("pt-BR")} chamados carregados`,"info")}
+    if(rch.length||rcs.length){S.chamados=processRel(rch);S.satisfacao=rcs;popFilters();renderAll();toast(`${rch.length.toLocaleString("pt-BR")} chamados carregados`,"success")}
   }catch(err){toast(`Erro Firebase: ${err.message}`,"error")}
-  finally{hideL();document.getElementById("btn-import").disabled=!(S.fileRel||S.fileCsat)}
+  finally{document.getElementById("btn-import").disabled=!(S.fileRel||S.fileCsat)}
 }
 
 /* PROCESSING */
