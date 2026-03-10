@@ -252,7 +252,7 @@ function renderKPIs(ch,cs){
 /* USUARIOS SECTION */
 function renderUsers(ch){
   const by=groupBy(ch,"Contato"),sorted=Object.entries(by).sort((a,b)=>b[1].length-a[1].length),top20=sorted.slice(0,20),mx=top20[0]?.[1].length||1;
-  document.getElementById("ulabel").textContent=`&#x2014; ${sorted.length.toLocaleString("pt-BR")} usuarios`;
+  document.getElementById("ulabel").textContent=`— ${sorted.length.toLocaleString("pt-BR")} usuarios`;
   document.getElementById("rlist").innerHTML=top20.map(([n,a],i)=>{
     const emp=a[0]?.["Empresa"]||"",pct=(a.length/mx*100).toFixed(1),pc=i===0?"t1":i===1?"t2":i===2?"t3":"";
     return`<div class="ritem"><span class="rpos ${pc}">${i+1}</span><div style="flex:1;min-width:0"><p class="rname" title="${n}">${n}</p><p class="remp">${emp}</p></div><div class="rbw"><div class="rbb"><div class="rbf" style="width:${pct}%"></div></div></div><span class="rcnt">${a.length}</span></div>`;
