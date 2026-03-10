@@ -45,7 +45,7 @@ function setupAuth(){
       S.user=user;
       document.getElementById("login-screen").style.display="none";
       document.getElementById("app").classList.add("visible");
-      const em=user.email||"";
+      const em=(user.email||"").replace("@dash.local", "");
       document.getElementById("uemail").textContent=em;
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
       
@@ -65,19 +65,23 @@ function setupAuth(){
 }
 
 document.getElementById("btn-login").addEventListener("click",async()=>{
-  const email=document.getElementById("lin-email").value.trim();
+  const val=document.getElementById("lin-email").value.trim();
   const senha=document.getElementById("lin-senha").value;
   const errEl=document.getElementById("lerr");
   errEl.classList.remove("show");
-  if(!email||!senha){errEl.textContent="Preencha e-mail e senha.";errEl.classList.add("show");return}
+  if(!val||!senha){errEl.textContent="Preencha usuário e senha.";errEl.classList.add("show");return}
+  const email = val.includes("@") ? val : val + "@dash.local";
   const btn = document.getElementById("btn-login");
   btn.disabled=true; btn.textContent="Autenticando...";
   showL("Verificando credenciais...");
-  try{await window.__FB.signIn(email,senha)}
+  try{
+    await window.__FB.signIn(email,senha);
+    hideL();
+  }
   catch(err){
     hideL();btn.disabled=false;btn.innerHTML="Entrar &#x2192;";
-    const msgs={"auth/invalid-credential":"E-mail ou senha incorretos.","auth/user-not-found":"Usuario nao encontrado.","auth/wrong-password":"Senha incorreta.","auth/invalid-email":"E-mail invalido.","auth/too-many-requests":"Muitas tentativas. Aguarde."};
-    console.error("Register error:",err.code,err.message);
+    const msgs={"auth/invalid-credential":"Usuário ou senha incorretos.","auth/user-not-found":"Usuario nao encontrado.","auth/wrong-password":"Senha incorreta.","auth/invalid-email":"Usuário invalido.","auth/too-many-requests":"Muitas tentativas. Aguarde."};
+    console.error("Login error:",err.code,err.message);
     errEl.textContent=msgs[err.code]||`Erro: ${err.message}`;errEl.classList.add("show");
   }
 });
@@ -104,36 +108,37 @@ document.getElementById("register-modal").addEventListener("click",e=>{
 });
 
 document.getElementById("btn-register").addEventListener("click",async()=>{
-  const email  = document.getElementById("reg-email").value.trim();
+  const val  = document.getElementById("reg-email").value.trim();
   const senha  = document.getElementById("reg-senha").value;
   const senha2 = document.getElementById("reg-senha2").value;
   const errEl  = document.getElementById("reg-err");
   errEl.classList.remove("show");
 
-  if(!email){errEl.textContent="Informe um e-mail.";errEl.classList.add("show");return}
+  if(!val){errEl.textContent="Informe um usuário.";errEl.classList.add("show");return}
   if(senha.length<6){errEl.textContent="Senha deve ter ao menos 6 caracteres.";errEl.classList.add("show");return}
   if(senha!==senha2){errEl.textContent="As senhas nao coincidem.";errEl.classList.add("show");return}
+
+  const email = val.includes("@") ? val : val + "@dash.local";
 
   const btn=document.getElementById("btn-register");
   btn.disabled=true;btn.textContent="Criando...";
   showL("Criando conta...");
   try{
     await window.__FB.createUser(email,senha);
-    closeRegister();
     hideL();
+    closeRegister();
     toast("Conta criada! Voce ja esta logado.","success");
   }catch(err){
     hideL();btn.disabled=false;btn.innerHTML="Criar conta &#x2192;";
     const msgs={
-      "auth/email-already-in-use":"Este e-mail ja esta cadastrado.",
-      "auth/invalid-email":"Formato de e-mail invalido.",
+      "auth/email-already-in-use":"Este usuário ja esta cadastrado.",
+      "auth/invalid-email":"Usuário invalido.",
       "auth/weak-password":"Senha muito fraca. Use ao menos 6 caracteres.",
       "auth/network-request-failed":"Erro de conexao. Verifique a internet.",
     };
     console.error("Register error:",err.code,err.message);
     errEl.textContent=msgs[err.code]||`Erro (${err.code}): ${err.message}`;
     errEl.classList.add("show");
-    console.error("Register error:",err.code,err.message);
   }
 });
 

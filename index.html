@@ -46,8 +46,8 @@
       <div><h1>DASHBOARD TI</h1><p>Gestao de Chamados</p></div>
     </div>
     <h2>Entrar na plataforma</h2>
-    <p class="lsub">Acesse com seu e-mail e senha cadastrados.</p>
-    <div class="field"><label>E-MAIL</label><input type="email" id="lin-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <p class="lsub">Acesse com seu usuário e senha cadastrados.</p>
+    <div class="field"><label>USUÁRIO</label><input type="text" id="lin-email" placeholder="Seu nome de usuário" autocomplete="username"/></div>
     <div class="field"><label>SENHA</label><input type="password" id="lin-senha" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" autocomplete="current-password"/></div>
     <button class="btn-login" id="btn-login">Entrar &#x2192;</button>
     <div class="lerr" id="lerr"></div>
@@ -63,8 +63,8 @@
       <div><h1>NOVO USUARIO</h1><p>Dashboard TI</p></div>
     </div>
     <h2>Criar conta</h2>
-    <p class="lsub">Defina um e-mail e senha para acessar o dashboard.</p>
-    <div class="field"><label>E-MAIL</label><input type="text" id="reg-email" placeholder="usuario@empresa.com" autocomplete="off"/></div>
+    <p class="lsub">Defina um nome de usuário e senha para acessar o dashboard.</p>
+    <div class="field"><label>USUÁRIO</label><input type="text" id="reg-email" placeholder="Nome de usuário" autocomplete="off"/></div>
     <div class="field"><label>SENHA</label><input type="password" id="reg-senha" placeholder="Minimo 6 caracteres" autocomplete="new-password"/></div>
     <div class="field"><label>CONFIRMAR SENHA</label><input type="password" id="reg-senha2" placeholder="Repita a senha" autocomplete="new-password"/></div>
     <div style="display:flex;gap:10px;margin-top:8px">
@@ -72,7 +72,7 @@
       <button class="btn-login" id="btn-register" style="flex:2;margin-top:0">Criar conta &#x2192;</button>
     </div>
     <div class="lerr" id="reg-err"></div>
-    <p class="lfooter" style="margin-top:16px">Nao e necessario confirmar por e-mail.</p>
+    <p class="lfooter" id="toggle-form-hint">Nao tem conta? <a href="#" id="go-register" style="color:var(--cyan);text-decoration:none;font-weight:600">Cadastrar</a></p>
   </div>
 </div>
 
