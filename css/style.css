@@ -87,7 +87,8 @@
     .lerr{background:rgba(255,82,82,.1);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:12px;padding:10px 14px;margin-top:12px;display:none}
     .lerr.show{display:block}
     .lfooter{text-align:center;margin-top:24px;font-size:11px;color:var(--muted)}
-    #register-modal{display:none}#register-modal.show{display:flex!important}
+    #register-modal, #admins-modal{display:none}
+    #register-modal.show, #admins-modal.show{display:flex!important}
 
     /* APP */
     #app{display:none;min-height:100vh;position:relative;z-index:1}
