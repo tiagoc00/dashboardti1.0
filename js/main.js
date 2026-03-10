@@ -65,12 +65,12 @@ function setupAuth(){
       S.user=user;
       document.getElementById("login-screen").style.display="none";
       document.getElementById("app").classList.add("visible");
-      const em=(user.email||"").replace("@dash.local", "");
+      const em=(user.email||"").split("@")[0]; // garante pega apenas o username
       document.getElementById("uemail").textContent=em;
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
       
       // Access Control (Check Firestore)
-      let isAdmin = em.toLowerCase() === "admin";
+      let isAdmin = em.toLowerCase() === "admin" || em.toLowerCase() === "tiago.cabral";
       if(!isAdmin) {
         try {
           const doc = await window.__FB.getDoc(window.__FB.doc(window.__FB.db, "admins", em.toLowerCase()));
