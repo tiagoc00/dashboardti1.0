@@ -39,6 +39,24 @@
       --text:#E8E1D0;--muted:#8a776a;
       --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
     }
+
+    /* MODO CLARO */
+    body.light-mode{
+      --bg:#F5F0E8;--surface:#EDE6D6;--card:#E8E1D0;
+      --border:#d4c9b8;--border2:#c0b09c;
+      --text:#1a0f0a;--muted:#7a6357;
+      --cdim:rgba(218,13,23,.08);
+    }
+    body.light-mode::before{
+      background:radial-gradient(ellipse 70% 50% at 15% 10%,rgba(218,13,23,.06) 0%,transparent 60%),
+                 radial-gradient(ellipse 60% 40% at 85% 85%,rgba(218,85,19,.05) 0%,transparent 60%)
+    }
+
+    /* BOTÃO DE MODO */
+    .theme-toggle{background:none;border:1px solid var(--border2);color:var(--muted);border-radius:8px;padding:6px 10px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+    .theme-toggle:hover{border-color:var(--cyan);color:var(--cyan)}
+    #theme-btn-login{position:absolute;top:18px;right:18px}
+
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;

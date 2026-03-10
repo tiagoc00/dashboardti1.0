@@ -16,6 +16,26 @@
 
 const S={chamados:[],satisfacao:[],firebaseOk:false,charts:{},tab:"chamados",fileRel:null,fileCsat:null,user:null};
 
+/* THEME TOGGLE */
+function applyTheme(light){
+  document.body.classList.toggle("light-mode", light);
+  const icon = light ? "☀️ Modo" : "🌙 Modo";
+  const iconSmall = light ? "☀️" : "🌙";
+  const loginBtn = document.getElementById("theme-btn-login");
+  const appBtn   = document.getElementById("theme-btn-app");
+  if(loginBtn) loginBtn.textContent = icon;
+  if(appBtn)   appBtn.textContent   = iconSmall;
+  localStorage.setItem("theme", light ? "light" : "dark");
+}
+// Restaurar preferência salva
+applyTheme(localStorage.getItem("theme") === "light");
+document.addEventListener("click", e=>{
+  if(e.target.id === "theme-btn-login" || e.target.id === "theme-btn-app"){
+    applyTheme(!document.body.classList.contains("light-mode"));
+  }
+});
+
+
 const timeToMin=str=>{if(!str)return null;const p=String(str).trim().split(":");if(p.length<2)return null;const[h,m,s]=[+p[0],+p[1],+(p[2]||0)];return isNaN(h+m+s)?null:h*60+m+s/60};
 const fmtMin=min=>{if(min==null||isNaN(min))return"&#x2014;";const h=Math.floor(min/60),m=Math.round(min%60);return h>0?`${h}h ${String(m).padStart(2,"0")}min`:`${m}min`};
 const cleanSt=s=>{if(!s)return"Sem categoria";return s.replace(/[^\w\s>áéíóúàâêôãõçÁÉÍÓÚÀÂÊÔÃÕÇ/()]/g,"").trim()||"Sem categoria"};
