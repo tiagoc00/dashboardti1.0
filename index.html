@@ -89,22 +89,20 @@
       <button class="btn-logout" id="btn-logout" title="Sair">&#x238B;</button>
       <button class="theme-toggle" id="theme-btn-app" title="Alternar modo">🌙</button>
     </div>
-    <div class="sbsec"><p class="sblabel">Banco de Dados</p>
+    <div class="sbsec admin-only"><p class="sblabel">Banco de Dados</p>
       <div class="fbbadge connecting" id="fbbadge"><div class="fbdot pulse"></div><span id="fbstatus">Conectando...</span></div>
     </div>
-    <div class="sbsec"><p class="sblabel">Importar Dados</p>
+    <div class="sbsec admin-only"><p class="sblabel">Importar Dados</p>
       <label class="uzone" id="zone-rel"><input type="file" accept=".xlsx,.xls,.csv" id="file-rel"/>
         <div class="uzicon">&#x1F4CB;</div><div class="uztitle">Relatorio Detalhado</div><div class="uzsub">.xlsx ou .csv</div></label>
       <label class="uzone" id="zone-csat"><input type="file" accept=".xlsx,.xls,.csv" id="file-csat"/>
         <div class="uzicon">&#x2B50;</div><div class="uztitle">Pesquisa de Satisfacao</div><div class="uzsub">.xlsx ou .csv</div></label>
       <button class="btn-primary" id="btn-import" disabled>&#x2601;&#xFE0F; Importar para Firebase</button>
     </div>
-    <div class="sbsec"><p class="sblabel">Filtros</p>
+    <div class="sbsec"><p class="sblabel">Filtros Opcionais</p>
       <div class="fgroup"><label>Atendente</label><select id="fat"><option value="">Todos</option></select></div>
       <div class="fgroup"><label>Setor</label><select id="fst"><option value="">Todos</option></select></div>
-      <div class="fgroup"><label>Data inicio</label><input type="date" id="fdi"/></div>
-      <div class="fgroup"><label>Data fim</label><input type="date" id="fdf"/></div>
-      <button class="btn-sec" id="btn-reset">&#x21BA; Limpar filtros</button>
+      <button class="btn-sec" id="btn-reset" style="margin-top:4px">&#x21BA; Limpar Tudo</button>
     </div>
   </aside>
 
@@ -117,9 +115,14 @@
     </div>
 
     <div id="dash" style="display:none;flex-direction:column;gap:26px">
-      <div class="pheader">
-        <div><h2>CHAMADOS DE TI</h2><p>SLA &middot; Produtividade &middot; Satisfacao &middot; Usuarios</p></div>
-        <div class="lupdate" id="lupdate"></div>
+      <div class="pheader" style="align-items:center;flex-wrap:wrap;gap:14px">
+        <div style="flex:1;min-width:200px"><h2>CHAMADOS DE TI</h2><p>SLA &middot; Produtividade &middot; Satisfacao &middot; Usuarios</p></div>
+        <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px">
+          <div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">De:</span><input type="date" id="fdi" style="background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;cursor:pointer"/></div>
+          <div style="width:1px;height:14px;background:var(--border)"></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">Ate:</span><input type="date" id="fdf" style="background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;cursor:pointer"/></div>
+        </div>
+        <div class="lupdate" id="lupdate" style="min-width:140px;text-align:right"></div>
       </div>
 
       <!-- KPIs principais -->

@@ -57,6 +57,10 @@
     .theme-toggle:hover{border-color:var(--cyan);color:var(--cyan)}
     #theme-btn-login{position:absolute;top:18px;right:18px}
 
+    /* CONTROLE DE ACESSO */
+    .admin-only{display:none!important}
+    body.is-admin .admin-only{display:flex!important;flex-direction:column}
+
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;

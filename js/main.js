@@ -69,6 +69,15 @@ function setupAuth(){
       document.getElementById("uemail").textContent=em;
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
       
+      // Access Control
+      const isAdmin = em.toLowerCase() === "tiago.cabral";
+      document.body.classList.toggle("is-admin", isAdmin);
+      const roleEl = document.querySelector(".urole");
+      if(roleEl) {
+        roleEl.textContent = isAdmin ? "Administrador" : "Leitor";
+        roleEl.style.color = isAdmin ? "var(--cyan)" : "var(--muted)";
+      }
+      
       const btn = document.getElementById("btn-login");
       if(btn) { btn.disabled=false; btn.innerHTML="Entrar &#x2192;"; }
       
