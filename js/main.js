@@ -202,7 +202,10 @@ async function loadFromFB(){
 
 /* PROCESSING */
 function processRel(raw){
-  return raw.filter(r=>r["Atendente"]&&r["Atendente"]!=="Sistema").map(r=>({...r,_tm:timeToMin(r["Tempo"]),_fm:timeToMin(r["Tempo na Fila"]),_st:cleanSt(r["Setor"]),_dt:parseDate(r["Abertura"]),_ms:parseMes(r["Abertura"])}));
+  return raw.filter(r=>r["Atendente"]&&r["Atendente"]!=="Sistema").map(r=>({...r,_tm:timeToMin(r["Tempo"]),_fm:timeToMin(r["Tempo na Fila"]),_st:cleanSt(r["Setor"]),_dt:parseDate(r["Abertura"]),_ms:parseMes(r["Abertura"]),
+    "Empresa": r["Empresa"] ? r["Empresa"].trim() : "Usuário sem empresa cadastrada",
+    "Contato": r["Contato"] ? r["Contato"].trim() : "Usuário não identificado"
+  }));
 }
 
 /* FILTERS */
@@ -240,9 +243,9 @@ function renderKPIs(ch,cs){
   const sc=calcCsat(cs);
   const ce=document.getElementById("k-csat");ce.textContent=cs.length?`${sc}%`:"&#x2014;";ce.style.color=cs.length?csatClr(sc):"var(--muted)";
   document.getElementById("k-csat-sub").textContent=`${cs.length.toLocaleString("pt-BR")} avaliacoes`;
-  const bu=groupBy(ch,"Contato"),ue=Object.entries(bu).filter(([k])=>k&&k!=="&#x2014;").sort((a,b)=>b[1].length-a[1].length);
-  const be=groupBy(ch,"Empresa"),ee=Object.entries(be).filter(([k])=>k&&k!=="&#x2014;").sort((a,b)=>b[1].length-a[1].length);
-  const totalUsers=Object.keys(bu).filter(k=>k&&k!=="&#x2014;").length;
+  const bu=groupBy(ch,"Contato"),ue=Object.entries(bu).filter(([k])=>k&&k!=="Usuário não identificado").sort((a,b)=>b[1].length-a[1].length);
+  const be=groupBy(ch,"Empresa"),ee=Object.entries(be).filter(([k])=>k&&k!=="Usuário sem empresa cadastrada").sort((a,b)=>b[1].length-a[1].length);
+  const totalUsers=Object.keys(bu).filter(k=>k&&k!=="Usuário não identificado").length;
   document.getElementById("k-users").textContent=totalUsers.toLocaleString("pt-BR");
   if(ue.length){document.getElementById("k-topuser").textContent=ue[0][0];document.getElementById("k-topuser-sub").textContent=`${ue[0][1].length.toLocaleString("pt-BR")} chamados`}
   document.getElementById("k-avguser").textContent=totalUsers?Math.round(ch.length/totalUsers).toLocaleString("pt-BR"):"&#x2014;";
