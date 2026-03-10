@@ -65,7 +65,7 @@ function setupAuth(){
       S.user=user;
       document.getElementById("login-screen").style.display="none";
       document.getElementById("app").classList.add("visible");
-      const em=(user.email||"").split("@")[0]; // garante pega apenas o username
+      const em=(user.email||"").split("@")[0].trim(); // garante pega apenas o username limpo
       document.getElementById("uemail").textContent=em;
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
       
