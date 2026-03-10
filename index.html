@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+  index.html — Dashboard de Chamados de TI
+  
+  Estrutura de arquivos:
+    index.html   → Estrutura HTML (este arquivo)
+    style.css    → Todos os estilos e layout
+    firebase.js  → Inicialização Firebase (módulo ES6)
+    main.js      → Lógica, gráficos, tabelas e autenticação
+
+  Bibliotecas externas (CDN):
+    - Chart.js 4.4.0     → Gráficos interativos
+    - SheetJS 0.20.1     → Leitura de arquivos .xlsx/.csv
+    - Firebase 10.12.0   → Banco de dados e autenticação
+    - IBM Plex Fonts      → Tipografia
+-->
+
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard TI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+  <!-- FIREBASE SDK -->
+    <script type="module" src="js/firebase.js"></script>
+
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading"><div class="spinner"></div><p id="lmsg">Carregando...</p></div>
+
+<!-- TOAST -->
+<div id="toast"><span id="ticon">i</span><span id="tmsg"></span></div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="lcard">
+    <div class="llogo">
+      <div class="llogo-icon">&#x1F5A5;&#xFE0F;</div>
+      <div><h1>DASHBOARD TI</h1><p>Gestao de Chamados</p></div>
+    </div>
+    <h2>Entrar na plataforma</h2>
+    <p class="lsub">Acesse com seu e-mail e senha cadastrados.</p>
+    <div class="field"><label>E-MAIL</label><input type="email" id="lin-email" placeholder="seu@email.com" autocomplete="email"/></div>
+    <div class="field"><label>SENHA</label><input type="password" id="lin-senha" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Entrar &#x2192;</button>
+    <div class="lerr" id="lerr"></div>
+    <p class="lfooter" id="toggle-form-hint">Nao tem conta? <a href="#" id="go-register" style="color:var(--cyan);text-decoration:none;font-weight:600">Cadastrar</a></p>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div id="register-modal" style="position:fixed;inset:0;z-index:101;align-items:center;justify-content:center;background:rgba(7,9,15,.7);backdrop-filter:blur(4px)">
+  <div class="lcard" style="max-width:420px">
+    <div class="llogo">
+      <div class="llogo-icon">&#x1F464;</div>
+      <div><h1>NOVO USUARIO</h1><p>Dashboard TI</p></div>
+    </div>
+    <h2>Criar conta</h2>
+    <p class="lsub">Defina um e-mail e senha para acessar o dashboard.</p>
+    <div class="field"><label>E-MAIL</label><input type="text" id="reg-email" placeholder="usuario@empresa.com" autocomplete="off"/></div>
+    <div class="field"><label>SENHA</label><input type="password" id="reg-senha" placeholder="Minimo 6 caracteres" autocomplete="new-password"/></div>
+    <div class="field"><label>CONFIRMAR SENHA</label><input type="password" id="reg-senha2" placeholder="Repita a senha" autocomplete="new-password"/></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn-sec" id="btn-cancel-reg" style="flex:1">Cancelar</button>
+      <button class="btn-login" id="btn-register" style="flex:2;margin-top:0">Criar conta &#x2192;</button>
+    </div>
+    <div class="lerr" id="reg-err"></div>
+    <p class="lfooter" style="margin-top:16px">Nao e necessario confirmar por e-mail.</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-icon">&#x1F5A5;&#xFE0F;</div><div class="logo-text"><h1>DASHBOARD TI</h1><p>Gestao de Chamados</p></div></div>
+    <div class="ubadge">
+      <div class="uavatar" id="uavatar">?</div>
+      <div class="uinfo"><p class="uemail" id="uemail">&#x2014;</p><p class="urole">Gestor de TI</p></div>
+      <button class="btn-logout" id="btn-logout" title="Sair">&#x238B;</button>
+    </div>
+    <div class="sbsec"><p class="sblabel">Banco de Dados</p>
+      <div class="fbbadge connecting" id="fbbadge"><div class="fbdot pulse"></div><span id="fbstatus">Conectando...</span></div>
+    </div>
+    <div class="sbsec"><p class="sblabel">Importar Dados</p>
+      <label class="uzone" id="zone-rel"><input type="file" accept=".xlsx,.xls,.csv" id="file-rel"/>
+        <div class="uzicon">&#x1F4CB;</div><div class="uztitle">Relatorio Detalhado</div><div class="uzsub">.xlsx ou .csv</div></label>
+      <label class="uzone" id="zone-csat"><input type="file" accept=".xlsx,.xls,.csv" id="file-csat"/>
+        <div class="uzicon">&#x2B50;</div><div class="uztitle">Pesquisa de Satisfacao</div><div class="uzsub">.xlsx ou .csv</div></label>
+      <button class="btn-primary" id="btn-import" disabled>&#x2601;&#xFE0F; Importar para Firebase</button>
+    </div>
+    <div class="sbsec"><p class="sblabel">Filtros</p>
+      <div class="fgroup"><label>Atendente</label><select id="fat"><option value="">Todos</option></select></div>
+      <div class="fgroup"><label>Setor</label><select id="fst"><option value="">Todos</option></select></div>
+      <div class="fgroup"><label>Data inicio</label><input type="date" id="fdi"/></div>
+      <div class="fgroup"><label>Data fim</label><input type="date" id="fdf"/></div>
+      <button class="btn-sec" id="btn-reset">&#x21BA; Limpar filtros</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="estate" id="estate">
+      <div style="font-size:52px">&#x2601;&#xFE0F;</div>
+      <h3>Nenhum dado carregado</h3>
+      <p>Faca upload dos arquivos na barra lateral e clique em <strong style="color:var(--cyan)">Importar para Firebase</strong>.</p>
+    </div>
+
+    <div id="dash" style="display:none;flex-direction:column;gap:26px">
+      <div class="pheader">
+        <div><h2>CHAMADOS DE TI</h2><p>SLA &middot; Produtividade &middot; Satisfacao &middot; Usuarios</p></div>
+        <div class="lupdate" id="lupdate"></div>
+      </div>
+
+      <!-- KPIs principais -->
+      <section>
+        <p class="stitle">&#x25C8; KPIs Principais</p>
+        <div class="kgrid">
+          <div class="kcard cc"><p class="klabel">Total de Chamados</p><p class="kvalue" id="k-total" style="color:var(--cyan)">&#x2014;</p><p class="ksub">chamados resolvidos</p></div>
+          <div class="kcard cg"><p class="klabel">Tempo Medio Resolucao</p><p class="kvalue" id="k-sla" style="color:var(--green)">&#x2014;</p><p class="ksub">por chamado</p></div>
+          <div class="kcard ca"><p class="klabel">Tempo Medio na Fila</p><p class="kvalue" id="k-fila" style="color:var(--amber)">&#x2014;</p><p class="ksub">aguardando atendimento</p></div>
+          <div class="kcard cb"><p class="klabel">CSAT Score</p><p class="kvalue" id="k-csat" style="color:var(--blue)">&#x2014;</p><p class="ksub" id="k-csat-sub">avaliacoes</p></div>
+        </div>
+      </section>
+
+      <!-- KPIs usuarios -->
+      <section>
+        <p class="stitle">&#x25C8; Usuarios em Destaque</p>
+        <div class="kgrid">
+          <div class="kcard cp"><p class="klabel">Total de Usuarios</p><p class="kvalue" id="k-users" style="color:var(--purple)">&#x2014;</p><p class="ksub">usuarios unicos</p></div>
+          <div class="kcard ca"><p class="klabel">Usuario Mais Ativo</p><p class="kvalue" id="k-topuser" style="color:var(--amber);font-size:16px;margin-top:6px">&#x2014;</p><p class="ksub" id="k-topuser-sub">chamados</p></div>
+          <div class="kcard cc"><p class="klabel">Media por Usuario</p><p class="kvalue" id="k-avguser" style="color:var(--cyan)">&#x2014;</p><p class="ksub">chamados/usuario</p></div>
+          <div class="kcard cg"><p class="klabel">Empresa Mais Ativa</p><p class="kvalue" id="k-topemp" style="color:var(--green);font-size:16px;margin-top:6px">&#x2014;</p><p class="ksub" id="k-topemp-sub">chamados</p></div>
+        </div>
+      </section>
+
+      <!-- Volume -->
+      <section>
+        <p class="stitle">&#x25C8; Volume de Chamados</p>
+        <div class="crow c2">
+          <div class="ccard"><p class="ctitle">&#x1F4CA; Chamados por Atendente</p><div style="height:280px"><canvas id="ch-atend"></canvas></div></div>
+          <div class="ccard"><p class="ctitle">&#x1F4C2; Top 10 Categorias</p><div style="height:280px"><canvas id="ch-setor"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- Usuarios -->
+      <section>
+        <p class="stitle">&#x25C8; Chamados por Usuario</p>
+        <div class="ugrid">
+          <div class="ccard"><p class="ctitle">&#x1F3C6; Top 20 Usuarios <span id="ulabel"></span></p><div class="rlist" id="rlist"></div></div>
+          <div class="ccard"><p class="ctitle">&#x1F4CA; Top 10 Usuarios <span>(volume)</span></p><div style="height:320px"><canvas id="ch-users"></canvas></div></div>
+        </div>
+        <div class="ccard" style="margin-top:14px">
+          <p class="ctitle">&#x1F3E2; Top 15 Empresas <span>(volume)</span></p>
+          <div style="height:260px"><canvas id="ch-emp"></canvas></div>
+        </div>
+      </section>
+
+      <!-- Satisfacao & SLA -->
+      <section>
+        <p class="stitle">&#x25C8; Satisfacao &amp; SLA</p>
+        <div class="crow c2">
+          <div class="ccard"><p class="ctitle">&#x1F369; Distribuicao CSAT <span id="csatlabel"></span></p><div style="height:280px"><canvas id="ch-csat"></canvas></div></div>
+          <div class="ccard"><p class="ctitle">&#x23F1;&#xFE0F; Tempo Medio por Atendente</p><div style="height:280px"><canvas id="ch-sla"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- Mensal -->
+      <section>
+        <p class="stitle">&#x25C8; Evolucao Mensal</p>
+        <div class="crow c2">
+          <div class="ccard"><p class="ctitle">&#x1F4C8; Volume Mensal</p><div style="height:220px"><canvas id="ch-vmes"></canvas></div></div>
+          <div class="ccard"><p class="ctitle">&#x1F4C9; Tempo Medio Mensal (min)</p><div style="height:220px"><canvas id="ch-smes"></canvas></div></div>
+        </div>
+      </section>
+
+      <!-- Tabela -->
+      <section>
+        <p class="stitle">&#x25C8; Dados Brutos</p>
+        <div class="tcard">
+          <div class="thead2">
+            <div class="tabs">
+              <button class="tabbtn active" data-tab="chamados">&#x1F4CB; Chamados</button>
+              <button class="tabbtn" data-tab="satisfacao">&#x2B50; Satisfacao</button>
+              <button class="tabbtn" data-tab="usuarios">&#x1F464; Usuarios</button>
+            </div>
+            <input class="tsearch" id="tsearch" placeholder="Pesquisar..."/>
+          </div>
+          <div class="twrap"><table><thead id="tblhead"></thead><tbody id="tblbody"></tbody></table></div>
+          <div class="tfooter" id="tblfooter"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+  <script src="js/main.js" defer></script>
+</body>
+</html>
