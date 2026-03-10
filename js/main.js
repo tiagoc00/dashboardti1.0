@@ -48,6 +48,11 @@ function setupAuth(){
       const em=user.email||"";
       document.getElementById("uemail").textContent=em;
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
+      
+      const btn = document.getElementById("btn-login");
+      if(btn) { btn.disabled=false; btn.innerHTML="Entrar &#x2192;"; }
+      
+      showL("Conta validada! Sincronizando chamados do banco...");
       await loadFromFB();
     }else{
       S.user=null;
@@ -64,10 +69,12 @@ document.getElementById("btn-login").addEventListener("click",async()=>{
   const errEl=document.getElementById("lerr");
   errEl.classList.remove("show");
   if(!email||!senha){errEl.textContent="Preencha e-mail e senha.";errEl.classList.add("show");return}
-  document.getElementById("btn-login").disabled=true;showL("Autenticando...");
+  const btn = document.getElementById("btn-login");
+  btn.disabled=true; btn.textContent="Autenticando...";
+  showL("Verificando credenciais...");
   try{await window.__FB.signIn(email,senha)}
   catch(err){
-    hideL();document.getElementById("btn-login").disabled=false;
+    hideL();btn.disabled=false;btn.innerHTML="Entrar &#x2192;";
     const msgs={"auth/invalid-credential":"E-mail ou senha incorretos.","auth/user-not-found":"Usuario nao encontrado.","auth/wrong-password":"Senha incorreta.","auth/invalid-email":"E-mail invalido.","auth/too-many-requests":"Muitas tentativas. Aguarde."};
     console.error("Register error:",err.code,err.message);
     errEl.textContent=msgs[err.code]||`Erro: ${err.message}`;errEl.classList.add("show");
@@ -158,7 +165,10 @@ async function loadFBColl(name){
 }
 
 async function loadFromFB(){
-  showL("Carregando dados do Firebase...");
+  // Only change the loading message if it hasn't been set by setupAuth
+  const lmsg = document.getElementById("lmsg").textContent;
+  if (!lmsg.includes("Conta validada!")) { showL("Sincronizando banco de dados..."); }
+  
   try{
     const[rch,rcs]=await Promise.all([loadFBColl("chamados"),loadFBColl("satisfacao")]);
     if(rch.length||rcs.length){S.chamados=processRel(rch);S.satisfacao=rcs;popFilters();renderAll();toast(`${rch.length.toLocaleString("pt-BR")} chamados carregados`,"info")}
