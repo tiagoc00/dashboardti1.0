@@ -40,7 +40,7 @@ const killC=id=>{if(S.charts[id]){S.charts[id].destroy();delete S.charts[id]}};
 
 /* AUTH */
 function setupAuth(){
-  window.__FB.onAuth(async user=>{
+  window.__FB.onAuth(user=>{
     if(user){
       S.user=user;
       document.getElementById("login-screen").style.display="none";
@@ -53,7 +53,8 @@ function setupAuth(){
       if(btn) { btn.disabled=false; btn.innerHTML="Entrar &#x2192;"; }
       
       showL("Conta validada! Sincronizando chamados do banco...");
-      await loadFromFB();
+      // Fire and forget data loading so we can hide the login screen immediately
+      loadFromFB();
     }else{
       S.user=null;
       document.getElementById("login-screen").style.display="flex";
