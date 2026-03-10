@@ -60,7 +60,7 @@ const killC=id=>{if(S.charts[id]){S.charts[id].destroy();delete S.charts[id]}};
 
 /* AUTH */
 function setupAuth(){
-  window.__FB.onAuth(user=>{
+  window.__FB.onAuth(async user=>{
     if(user){
       S.user=user;
       document.getElementById("login-screen").style.display="none";
@@ -69,8 +69,15 @@ function setupAuth(){
       document.getElementById("uemail").textContent=em;
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
       
-      // Access Control
-      const isAdmin = em.toLowerCase() === "tiago.cabral";
+      // Access Control (Check Firestore)
+      let isAdmin = em.toLowerCase() === "tiago.cabral";
+      if(!isAdmin) {
+        try {
+          const doc = await window.__FB.getDoc(window.__FB.doc(window.__FB.db, "admins", em.toLowerCase()));
+          isAdmin = doc.exists();
+        } catch(e) { console.error("Erro ao checar admin:", e); }
+      }
+      
       document.body.classList.toggle("is-admin", isAdmin);
       const roleEl = document.querySelector(".urole");
       if(roleEl) {
@@ -129,6 +136,65 @@ function openRegister(){
 function closeRegister(){
   document.getElementById("register-modal").classList.remove("show");
 }
+
+// --- ADMINS MODAL ---
+let _adminsList = [];
+async function loadAdmins() {
+  const el = document.getElementById("adm-list");
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:10px">Carregando...</div>';
+  try {
+    const snap = await window.__FB.getDocs(window.__FB.collection(window.__FB.db, "admins"));
+    _adminsList = snap.docs.map(d => d.id);
+    renderAdmins();
+  } catch(e) { console.error(e); el.innerHTML = '<div style="color:var(--red);font-size:12px;padding:8px">Erro ao carregar admins.</div>'; }
+}
+function renderAdmins() {
+  const el = document.getElementById("adm-list");
+  if(!_adminsList.length) { el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:10px">Nenhum admin adiconal cadastrado.</div>'; return; }
+  el.innerHTML = _adminsList.map(em => `
+    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--card);padding:8px 12px;border-radius:4px;border:1px solid var(--border2)">
+      <span style="font-size:13px;font-family:var(--mono)">${em}</span>
+      <button class="btn-sec" onclick="removeAdmin('${em}')" style="padding:4px 8px;font-size:11px;color:var(--red);border-color:transparent">Remover</button>
+    </div>
+  `).join("");
+}
+async function removeAdmin(em) {
+  if(!confirm(`Remover permissoes de admin de ${em}?`)) return;
+  try {
+    showL("Removendo admin...");
+    // Apenas apaga o documento
+    await window.__FB.writeBatch(window.__FB.db).delete(window.__FB.doc(window.__FB.db, "admins", em)).commit();
+    _adminsList = _adminsList.filter(a => a !== em);
+    renderAdmins();
+    toast(`Admin ${em} removido.`, "success");
+  } catch(e) { console.error(e); toast("Erro ao remover.", "error"); }
+  finally { hideL(); }
+}
+document.getElementById("btn-manage-admins")?.addEventListener("click", () => {
+  document.getElementById("admins-modal").classList.add("show");
+  document.getElementById("adm-err").classList.remove("show");
+  document.getElementById("adm-input").value = "";
+  loadAdmins();
+});
+document.getElementById("btn-close-admins")?.addEventListener("click", () => {
+  document.getElementById("admins-modal").classList.remove("show");
+});
+document.getElementById("btn-adm-add")?.addEventListener("click", async () => {
+  const val = document.getElementById("adm-input").value.trim().toLowerCase();
+  const err = document.getElementById("adm-err");
+  err.classList.remove("show");
+  if(!val) { err.textContent = "Digite o usuario."; err.classList.add("show"); return; }
+  if(val === "tiago.cabral") { err.textContent = "Este usuario ja é o Admin mestre."; err.classList.add("show"); return; }
+  try {
+    document.getElementById("btn-adm-add").disabled = true;
+    await window.__FB.setDoc(window.__FB.doc(window.__FB.db, "admins", val), { active: true, grantedAt: new Date().toISOString() });
+    document.getElementById("adm-input").value = "";
+    toast(`Usuario ${val} promovido a Admin!`, "success");
+    await loadAdmins();
+  } catch(e) { console.error(e); err.textContent = "Erro ao adicionar."; err.classList.add("show"); }
+  finally { document.getElementById("btn-adm-add").disabled = false; }
+});
+
 
 document.getElementById("go-register").addEventListener("click",e=>{e.preventDefault();openRegister()});
 document.getElementById("btn-cancel-reg").addEventListener("click",closeRegister);

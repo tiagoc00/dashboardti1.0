@@ -89,6 +89,9 @@
       <button class="btn-logout" id="btn-logout" title="Sair">&#x238B;</button>
       <button class="theme-toggle" id="theme-btn-app" title="Alternar modo">🌙</button>
     </div>
+    <div class="sbsec admin-only"><p class="sblabel">Configuracoes</p>
+      <button class="btn-sec" id="btn-manage-admins" style="width:100%;text-align:left;margin-bottom:12px;display:flex;align-items:center;gap:8px"><span>👑</span> Gerenciar Admins</button>
+    </div>
     <div class="sbsec admin-only"><p class="sblabel">Banco de Dados</p>
       <div class="fbbadge connecting" id="fbbadge"><div class="fbdot pulse"></div><span id="fbstatus">Conectando...</span></div>
     </div>
@@ -205,6 +208,30 @@
       </section>
     </div>
   </main>
+</div>
+
+<!-- ADMINS MODAL -->
+<div class="modal-overlay" id="admins-modal">
+  <div class="modal">
+    <h3 style="margin-bottom:8px">👑 Gerenciar Administradores</h3>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Admins podem importar bancos de dados e dar acesso a outros.</p>
+    
+    <div class="fgroup">
+      <label>Nome do Usuario (ex: joao.silva)</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="adm-input" placeholder="Digite o usuario..."/>
+        <button class="btn-primary" id="btn-adm-add" style="width:auto;padding:0 14px">Conceder</button>
+      </div>
+    </div>
+    
+    <div class="lerr" id="adm-err" style="margin-bottom:16px"></div>
+    <p class="stitle" style="margin-bottom:10px">&#x25C8; Admins Cadastrados</p>
+    <div id="adm-list" style="max-height:160px;overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+      <div style="color:var(--muted);font-size:12px;text-align:center;padding:10px">Carregando...</div>
+    </div>
+    
+    <button class="btn-sec" id="btn-close-admins" style="width:100%">Fechar</button>
+  </div>
 </div>
 
   <script src="js/main.js" defer></script>
