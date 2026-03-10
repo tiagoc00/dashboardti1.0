@@ -70,7 +70,7 @@ function setupAuth(){
       document.getElementById("uavatar").textContent=em[0]?.toUpperCase()||"U";
       
       // Access Control (Check Firestore)
-      let isAdmin = em.toLowerCase() === "tiago.cabral";
+      let isAdmin = em.toLowerCase() === "admin";
       if(!isAdmin) {
         try {
           const doc = await window.__FB.getDoc(window.__FB.doc(window.__FB.db, "admins", em.toLowerCase()));
@@ -184,7 +184,7 @@ document.getElementById("btn-adm-add")?.addEventListener("click", async () => {
   const err = document.getElementById("adm-err");
   err.classList.remove("show");
   if(!val) { err.textContent = "Digite o usuario."; err.classList.add("show"); return; }
-  if(val === "tiago.cabral") { err.textContent = "Este usuario ja é o Admin mestre."; err.classList.add("show"); return; }
+  if(val === "admin") { err.textContent = "Este usuario ja é o Admin mestre."; err.classList.add("show"); return; }
   try {
     document.getElementById("btn-adm-add").disabled = true;
     await window.__FB.setDoc(window.__FB.doc(window.__FB.db, "admins", val), { active: true, grantedAt: new Date().toISOString() });
