@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Funções auxiliares ────────────────────────────────────────────────
+    // Verifica se o usuário está autenticado
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Extrai o username (parte antes do @) do e-mail do usuário logado
+    function username() {
+      return request.auth.token.email.split('@')[0].lower();
+    }
+
+    // Verifica se o usuário é o admin mestre (hardcoded como fallback)
+    function isMasterAdmin() {
+      return username() == 'admin' || username() == 'tiago.cabral';
+    }
+
+    // Verifica se o usuário tem documento na coleção 'admins' do Firestore
+    function isFirestoreAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(username()));
+    }
+
+    // Combinação: é admin mestre OU tem documento em /admins/
+    function isAdmin() {
+      return isAuth() && (isMasterAdmin() || isFirestoreAdmin());
+    }
+
+    // ─── Coleção: chamados ─────────────────────────────────────────────────
+    // Qualquer usuário autenticado pode ler.
+    // Somente admins podem criar, atualizar ou deletar.
+    match /chamados/{docId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // ─── Coleção: satisfacao ───────────────────────────────────────────────
+    match /satisfacao/{docId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // ─── Coleção: admins ───────────────────────────────────────────────────
+    // Somente admins podem ler a lista de admins e conceder/revogar acesso.
+    // Leitores comuns NÃO enxergam esta coleção.
+    match /admins/{userId} {
+      allow read:   if isAdmin();
+      allow create: if isAdmin();
+      allow delete: if isAdmin();
+      allow update: if isAdmin();
+    }
+
+    // ─── Bloqueio padrão ──────────────────────────────────────────────────
+    // Qualquer outra coleção não mapeada acima é negada por padrão.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
