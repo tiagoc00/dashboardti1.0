@@ -1,4 +1,4 @@
-import { Button, Input } from '../atoms/index.js';
+import { Button, Input } from '../components/atoms/index.js';
 
 export const LoginTemplate = () => `
 <div id="login-container" class="fixed inset-0 z-[100] flex items-center justify-center bg-bg animate-fade-up">
