@@ -82,16 +82,7 @@ export const Sidebar = () => {
         </select>
       </div>
 
-      <div class="flex gap-2">
-         <div class="flex flex-col gap-1.5 w-1/2">
-           <label class="text-[10px] text-muted flex items-center justify-between">De <input type="date" id="fdi" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer w-full text-right" /></label>
-         </div>
-      </div>
-      <div class="flex gap-2">
-         <div class="flex flex-col gap-1.5 w-1/2">
-           <label class="text-[10px] text-muted flex items-center justify-between">Ate <input type="date" id="fdf" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer w-full text-right" /></label>
-         </div>
-      </div>
+
 
       <button id="btn-reset" class="mt-1 bg-transparent border border-border2 text-muted rounded-lg px-4 py-[7px] font-mono text-[11px] cursor-pointer w-full transition-all hover:border-cyan hover:text-cyan flex items-center justify-center gap-1.5">↺ Limpar Tudo</button>
     </div>
