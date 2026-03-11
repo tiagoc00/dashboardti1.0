@@ -22,6 +22,19 @@ export const MainDashboardLayout = () => {
            <h2 class="font-mono text-[20px] font-bold text-cyan">CHAMADOS DE TI</h2>
            <p class="text-[12px] text-muted mt-1">SLA · Produtividade · Satisfação · Usuários</p>
         </div>
+
+        <div class="flex items-center gap-4 bg-card border border-border2 rounded-lg px-3 py-1.5 shadow-sm">
+          <div class="flex items-center gap-2">
+            <label class="text-[10px] text-muted font-mono uppercase tracking-[1px]">De</label>
+            <input type="date" id="fdi" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+          </div>
+          <div class="w-px h-4 bg-border2"></div>
+          <div class="flex items-center gap-2">
+            <label class="text-[10px] text-muted font-mono uppercase tracking-[1px]">Ate</label>
+            <input type="date" id="fdf" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+          </div>
+        </div>
+
         <div id="lupdate" class="font-mono text-[11px] text-muted text-right min-w-[140px]">Atualizado: ---</div>
       </div>
 
