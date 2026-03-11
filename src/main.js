@@ -25,9 +25,9 @@ export function toast(msg, type = "info") {
   document.getElementById("ticon").innerHTML = icons[type] || "i";
   document.getElementById("tmsg").textContent = msg;
   
-  toastEl.className = \`fixed bottom-[22px] right-[22px] bg-card border rounded-[10px] p-3 text-[12px] flex items-center gap-[10px] z-[999] min-w-[260px] shadow-2xl transition-all duration-300 transform \${
+  toastEl.className = `fixed bottom-[22px] right-[22px] bg-card border rounded-[10px] p-3 text-[12px] flex items-center gap-[10px] z-[999] min-w-[260px] shadow-2xl transition-all duration-300 transform ${
     type === 'success' ? 'border-green' : type === 'error' ? 'border-red' : 'border-cyan'
-  }\`;
+  }`;
   
   void toastEl.offsetWidth;
   toastEl.classList.remove('translate-y-[80px]', 'opacity-0');
@@ -51,11 +51,8 @@ function renderDashboard() {
 }
 
 // Init App flow
-const initPoll = setInterval(() => {
-  if (window.__FB) {
-    clearInterval(initPoll);
+const initApp = () => {
     fbService = new FirebaseService();
-    
     // Auth Listener
     fbService.onAuth(async (user) => {
       if (user) {
@@ -72,13 +69,17 @@ const initPoll = setInterval(() => {
         renderLogin();
       }
     });
-  }
-}, 50);
+};
+
+if (window.__FB) {
+  initApp();
+} else {
+  window.addEventListener('firebase-ready', initApp);
+}
 
 setTimeout(() => {
   if (!window.__FB) {
-    clearInterval(initPoll);
     hideLoading();
-    document.getElementById('root').innerHTML = '<div class="text-red p-10 text-center font-mono text-sm">Erro: Firebase SDK Inacessível.</div>';
+    document.getElementById('root').innerHTML = '<div class="text-red p-10 text-center font-mono text-sm">Erro: Firebase SDK demorou muito para carregar. Verifique a internet e desative bloqueadores de anúncios.</div>';
   }
-}, 10000);
+}, 15000);
