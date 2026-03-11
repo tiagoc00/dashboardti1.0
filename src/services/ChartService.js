@@ -59,6 +59,30 @@ export const ChartService = {
   },
 
   renderCharts: (ch, cs, chartsState) => {
+    killC("atend", chartsState);
+    const byAtend = groupBy(ch, "Atendente");
+    const tat = Object.entries(byAtend).filter(([k]) => k && k !== "—" && k !== "Usuário não identificado").sort((a,b)=>b[1].length-a[1].length);
+    const ctxAtend = document.getElementById("ch-atend")?.getContext("2d");
+    if(ctxAtend) {
+      chartsState.atend = new Chart(ctxAtend, {
+        type: "bar",
+        data: { labels: tat.map(([n])=>n), datasets: [{ data: tat.map(([,a])=>a.length), backgroundColor: tat.map((_,i)=>BC[i%BC.length]+"cc"), borderWidth: 0, borderRadius: 4 }] },
+        options: { ...bOpts(), plugins: { ...bOpts().plugins, legend: { display: false } } }
+      });
+    }
+
+    killC("setor", chartsState);
+    const bySetor = groupBy(ch, "_st");
+    const tst = Object.entries(bySetor).filter(([k]) => k && k !== "—").sort((a,b)=>b[1].length-a[1].length).slice(0, 10);
+    const ctxSetor = document.getElementById("ch-setor")?.getContext("2d");
+    if(ctxSetor) {
+      chartsState.setor = new Chart(ctxSetor, {
+        type: "bar",
+        data: { labels: tst.map(([n])=>n), datasets: [{ data: tst.map(([,a])=>a.length), backgroundColor: tst.map((_,i)=>BC[(i+2)%BC.length]+"cc"), borderWidth: 0, borderRadius: 4 }] },
+        options: { ...bOpts(), plugins: { ...bOpts().plugins, legend: { display: false } } }
+      });
+    }
+
     // ... code intentionally omitted ...
     killC("csat", chartsState);
     if(cs.length) {
@@ -81,7 +105,8 @@ export const ChartService = {
     }
 
     killC("sla", chartsState);
-    const ta = Object.entries(groupBy(ch, "Atendente")).map(([k,v])=>({ n:k, m:avg(v.map(r=>r._tm).filter(x=>x!=null)) })).sort((a,b)=>a.m-b.m);
+    const byA = groupBy(ch, "Atendente");
+    const ta = Object.entries(byA).filter(([k]) => k && k !== "—" && k !== "Usuário não identificado").map(([k,v])=>({ n:k, m:avg(v.map(r=>r._tm).filter(x=>x!=null)) })).sort((a,b)=>a.m-b.m);
     const ctxSla = document.getElementById("ch-sla")?.getContext("2d");
     if(ctxSla) {
       chartsState.sla = new Chart(ctxSla, {

@@ -52,7 +52,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     }
     document.getElementById("k-avguser").textContent = totalUsers ? Math.round(ch.length/totalUsers).toLocaleString("pt-BR") : "—";
     if(ee.length) {
-      document.getElementById("k-topemp").textContent = ee[0][0];
+      document.getElementById("k-topemp").textContent = ee[0][0] === "&#x2014;" || ee[0][0] === "—" ? "USER SEM EMPRESA CADASTRADA" : ee[0][0];
       const ktopempSub = document.getElementById("k-topemp-sub");
       if(ktopempSub) ktopempSub.textContent = `${ee[0][1].length.toLocaleString("pt-BR")} chamados`;
     }
