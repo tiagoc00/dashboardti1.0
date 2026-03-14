@@ -34,7 +34,6 @@ export function attachLoginEvents(fbService, showLoading, hideLoading, toast) {
       
       try {
         await fbService.signIn(email, senha);
-        // auth event will trigger renderDashboard from main.js automatically
       } catch (err) {
         hideLoading();
         btnLogin.disabled = false;
@@ -53,9 +52,79 @@ export function attachLoginEvents(fbService, showLoading, hideLoading, toast) {
       }
     });
 
-    // Enter key support
     document.getElementById('lin-senha')?.addEventListener('keydown', e => {
       if (e.key === 'Enter') btnLogin.click();
+    });
+
+    document.getElementById('go-register')?.addEventListener('click', e => {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('render-register'));
+    });
+  }
+}
+
+export function attachRegisterEvents(fbService, showLoading, hideLoading, toast) {
+  const btnRegister = document.getElementById('btn-register');
+  
+  document.getElementById('go-login')?.addEventListener('click', e => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent('render-login'));
+  });
+
+  if (btnRegister) {
+    btnRegister.addEventListener('click', async () => {
+      const val = document.getElementById('reg-email').value.trim();
+      const senha = document.getElementById('reg-senha').value;
+      const senha2 = document.getElementById('reg-senha2').value;
+      const errEl = document.getElementById('rerr');
+      
+      errEl.classList.add('hidden');
+      
+      if (!val || !senha || !senha2) {
+        errEl.textContent = "Preencha todos os campos.";
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      if (senha !== senha2) {
+        errEl.textContent = "As senhas não coincidem.";
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      if (senha.length < 6) {
+        errEl.textContent = "A senha deve ter pelo menos 6 caracteres.";
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      const email = val.includes("@") ? val : val + "@dash.local";
+      
+      btnRegister.disabled = true;
+      btnRegister.textContent = "Cadastrando...";
+      showLoading("Criando sua conta...");
+      
+      try {
+        await fbService.createUser(email, senha);
+        toast("Conta criada com sucesso!", "success");
+      } catch (err) {
+        hideLoading();
+        btnRegister.disabled = false;
+        btnRegister.textContent = "Cadastrar &rarr;";
+        
+        const msgs = {
+          "auth/email-already-in-use": "Este usuário já está em uso.",
+          "auth/invalid-email": "Usuário inválido.",
+          "auth/operation-not-allowed": "O cadastro de novos usuários está desativado.",
+          "auth/weak-password": "A senha é muito fraca."
+        };
+        errEl.textContent = msgs[err.code] || "Erro ao criar conta. Tente novamente.";
+        errEl.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('reg-senha2')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') btnRegister.click();
     });
   }
 }

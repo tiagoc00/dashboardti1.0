@@ -38,3 +38,34 @@ export const LoginTemplate = () => `
   </p>
 </div>
 `;
+
+export const RegisterTemplate = () => `
+<div id="login-container" class="fixed inset-0 z-[100] flex items-center justify-center bg-bg animate-fade-in">
+  <div class="bg-card w-full max-w-[400px] border border-border2 rounded-2xl p-12 relative overflow-hidden shadow-2xl">
+    <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-purple to-cyan"></div>
+    
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-11 h-11 bg-cdim border border-cyan rounded-xl grid place-items-center text-[22px]">🖥️</div>
+      <div>
+        <h1 class="font-mono text-[16px] font-bold text-cyan leading-tight">DASHBOARD TI</h1>
+        <p class="text-[12px] text-muted">Gestão de Chamados</p>
+      </div>
+    </div>
+    
+    <h2 class="font-mono text-[18px] font-bold mb-1.5">Criar nova conta</h2>
+    <p class="text-[13px] text-muted mb-7">Cadastre seus dados para acessar o sistema.</p>
+    
+    ${Input({ id: "reg-email", label: "USUÁRIO", placeholder: "Escolha um nome de usuário", attrs: 'autocomplete="username"' })}
+    ${Input({ id: "reg-senha", label: "SENHA", type: "password", placeholder: "••••••••", attrs: 'autocomplete="new-password"' })}
+    ${Input({ id: "reg-senha2", label: "CONFIRMAR SENHA", type: "password", placeholder: "••••••••", attrs: 'autocomplete="new-password"' })}
+    
+    ${Button({ id: "btn-register", text: "Cadastrar &rarr;", variant: "primary" })}
+    
+    <div id="rerr" class="bg-red/10 border border-red rounded-lg text-red text-[12px] px-3.5 py-2.5 mt-3 hidden"></div>
+    
+    <p class="text-center mt-6 text-[11px] text-muted">
+      Já tem conta? <a href="#" id="go-login" class="text-cyan font-bold no-underline hover:underline">Fazer Login</a>
+    </p>
+  </div>
+</div>
+`;

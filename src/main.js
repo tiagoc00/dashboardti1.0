@@ -1,7 +1,7 @@
 import { FirebaseService } from './services/FirebaseService.js';
 import { UIState } from './services/UIState.js';
-import { LoginTemplate } from './pages/Login.js';
-import { attachLoginEvents } from './pages/LoginEvents.js';
+import { LoginTemplate, RegisterTemplate } from './pages/Login.js';
+import { attachLoginEvents, attachRegisterEvents } from './pages/LoginEvents.js';
 import { DashboardTemplate } from './pages/Dashboard.js';
 import { attachDashboardEvents } from './pages/DashboardEvents.js';
 
@@ -45,10 +45,18 @@ function renderLogin() {
   attachLoginEvents(fbService, showLoading, hideLoading, toast);
 }
 
+function renderRegister() {
+  document.getElementById('root').innerHTML = RegisterTemplate();
+  attachRegisterEvents(fbService, showLoading, hideLoading, toast);
+}
+
 function renderDashboard() {
   document.getElementById('root').innerHTML = DashboardTemplate();
   attachDashboardEvents(fbService, showLoading, hideLoading, toast);
 }
+
+window.addEventListener('render-register', renderRegister);
+window.addEventListener('render-login', renderLogin);
 
 // Init App flow
 const initApp = () => {
