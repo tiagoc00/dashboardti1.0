@@ -204,4 +204,86 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     const state = UIState.get();
     TableService.renderTable(state.chamados, state.satisfacao, state.tab, e.target.value);
   });
+
+  // Admin Management Events
+  const modalAdmins = document.getElementById("admins-modal");
+  const btnManageAdmins = document.getElementById("btn-manage-admins");
+  const btnCloseAdmins = document.getElementById("btn-close-admins");
+  const btnAddAdmin = document.getElementById("btn-adm-add");
+  const inputAdmin = document.getElementById("adm-input");
+  const listAdmins = document.getElementById("adm-list");
+  const errAdmin = document.getElementById("adm-err");
+
+  const renderAdmins = (admins) => {
+    if (!admins.length) {
+      listAdmins.innerHTML = '<div class="text-muted text-[11px] font-mono text-center py-8">Nenhum administrador extra.</div>';
+      return;
+    }
+    listAdmins.innerHTML = admins.map(email => `
+      <div class="flex items-center justify-between bg-surface border border-border p-2.5 rounded-lg group hover:border-cyan/50 transition-colors">
+        <span class="text-[12px] font-mono text-text">${email}</span>
+        <button class="btn-adm-rem text-muted hover:text-red p-1 cursor-pointer transition-colors text-[10px] font-mono" data-email="${email}">
+          [ REMOVER ]
+        </button>
+      </div>
+    `).join('');
+
+    listAdmins.querySelectorAll(".btn-adm-rem").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const email = btn.dataset.email;
+        if (confirm(`Remover acesso de administrador de ${email}?`)) {
+          try {
+            showLoading("Removendo...");
+            await fbService.removeAdmin(email);
+            toast(`Acesso removido para ${email}`, "success");
+            const updated = await fbService.loadAdmins();
+            renderAdmins(updated);
+          } catch (e) {
+            toast("Erro ao remover administrador", "error");
+          } finally {
+            hideLoading();
+          }
+        }
+      });
+    });
+  };
+
+  btnManageAdmins?.addEventListener("click", async () => {
+    modalAdmins.classList.remove("hidden");
+    modalAdmins.classList.add("flex");
+    errAdmin.classList.add("hidden");
+    inputAdmin.value = "";
+    
+    try {
+      const admins = await fbService.loadAdmins();
+      renderAdmins(admins);
+    } catch (e) {
+      listAdmins.innerHTML = '<div class="text-red text-[11px] font-mono text-center py-8">Erro ao carregar lista.</div>';
+    }
+  });
+
+  btnCloseAdmins?.addEventListener("click", () => {
+    modalAdmins.classList.add("hidden");
+    modalAdmins.classList.remove("flex");
+  });
+
+  btnAddAdmin?.addEventListener("click", async () => {
+    const email = inputAdmin.value.trim().toLowerCase();
+    if (!email) return;
+
+    errAdmin.classList.add("hidden");
+    try {
+      showLoading("Concedendo acesso...");
+      await fbService.addAdmin(email);
+      toast(`Acesso concedido para ${email}`, "success");
+      inputAdmin.value = "";
+      const updated = await fbService.loadAdmins();
+      renderAdmins(updated);
+    } catch (e) {
+      errAdmin.textContent = "Erro ao adicionar administrador.";
+      errAdmin.classList.remove("hidden");
+    } finally {
+      hideLoading();
+    }
+  });
 }

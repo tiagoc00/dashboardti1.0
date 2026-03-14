@@ -44,6 +44,19 @@ export class FirebaseService {
     });
   }
 
+  async loadAdmins() {
+    const snap = await this.fb.getDocs(this.fb.collection(this.fb.db, "admins"));
+    return snap.docs.map(d => d.id);
+  }
+
+  async addAdmin(email) {
+    await this.fb.setDoc(this.fb.doc(this.fb.db, "admins", email), { _at: new Date().toISOString() });
+  }
+
+  async removeAdmin(email) {
+    await this.fb.deleteDoc(this.fb.doc(this.fb.db, "admins", email));
+  }
+
   async saveBatch(name, data) {
     for (let i = 0; i < data.length; i += 400) {
       const b = this.fb.writeBatch(this.fb.db);
