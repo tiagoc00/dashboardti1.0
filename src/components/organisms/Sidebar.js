@@ -62,6 +62,8 @@ export const Sidebar = () => {
       </label>
 
       <button id="btn-import" disabled class="bg-cyan text-[#E8E1D0] border-none rounded-lg px-4 py-2.5 font-mono text-[12px] font-bold cursor-pointer w-full transition-all hover:opacity-85 disabled:opacity-40 disabled:cursor-not-allowed">☁️ Importar</button>
+
+      <button id="btn-clear-data" class="bg-transparent border border-red text-red/70 rounded-lg px-4 py-2.5 font-mono text-[11px] font-bold cursor-pointer w-full transition-all hover:bg-red/10 hover:text-red mt-1">🗑️ Excluir Dados</button>
     </div>
     ` : ''}
 

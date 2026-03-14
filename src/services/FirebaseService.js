@@ -76,4 +76,50 @@ export class FirebaseService {
       await b.commit();
     }
   }
+
+  async deleteCollection(name) {
+    const snap = await this.fb.getDocs(this.fb.collection(this.fb.db, name));
+    const batch = this.fb.writeBatch(this.fb.db);
+    snap.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+  }
+
+  async deleteByRange(name, startDate, endDate, dateField) {
+    const snap = await this.fb.getDocs(this.fb.collection(this.fb.db, name));
+    const batch = this.fb.writeBatch(this.fb.db);
+    let count = 0;
+    
+    // dateField mappings:
+    // chamados -> "Abertura" (DD/MM/YYYY)
+    // satisfacao -> "Data Hora" (DD/MM/YYYY HH:mm:ss)
+    
+    const parse = (str) => {
+      const m = String(str || "").match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      return m ? new Date(`${m[3]}-${m[2]}-${m[1]}`) : null;
+    };
+
+    const sd = startDate ? new Date(startDate) : null;
+    const ed = endDate ? new Date(endDate) : null;
+
+    snap.docs.forEach(doc => {
+      const data = doc.data();
+      const dt = parse(data[dateField]);
+      if (dt) {
+        let match = true;
+        if (sd && dt < sd) match = false;
+        if (ed && dt > ed) match = false;
+        if (match) {
+          batch.delete(doc.ref);
+          count++;
+        }
+      }
+    });
+
+    if (count > 0) {
+      await batch.commit();
+    }
+    return count;
+  }
 }

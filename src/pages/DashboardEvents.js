@@ -187,6 +187,98 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     renderAll();
   });
 
+  document.getElementById("btn-clear-data")?.addEventListener("click", () => {
+    const modal = document.getElementById("delete-data-modal");
+    if (modal) {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.getElementById("del-err").classList.add("hidden");
+    }
+  });
+
+  document.getElementById("btn-close-delete")?.addEventListener("click", () => {
+    const modal = document.getElementById("delete-data-modal");
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+  });
+
+  document.querySelectorAll('input[name="del-period"]').forEach(radio => {
+    radio.addEventListener("change", e => {
+      const rangeInputs = document.getElementById("del-range-inputs");
+      if (e.target.value === "range") {
+        rangeInputs.classList.remove("hidden");
+        rangeInputs.classList.add("flex");
+      } else {
+        rangeInputs.classList.add("hidden");
+        rangeInputs.classList.remove("flex");
+      }
+    });
+  });
+
+  document.getElementById("btn-del-confirm")?.addEventListener("click", async () => {
+    const period = document.querySelector('input[name="del-period"]:checked').value;
+    const errEl = document.getElementById("del-err");
+    errEl.classList.add("hidden");
+
+    if (period === "range") {
+      const start = document.getElementById("del-start").value;
+      const end = document.getElementById("del-end").value;
+      if (!start || !end) {
+        errEl.textContent = "Preencha as datas inicial e final.";
+        errEl.classList.remove("hidden");
+        return;
+      }
+      
+      if (new Date(start) > new Date(end)) {
+        errEl.textContent = "Data inicial não pode ser superior à final.";
+        errEl.classList.remove("hidden");
+        return;
+      }
+
+      if (confirm(`⚠️ Excluir permanentemente os dados do período ${start} até ${end}?`)) {
+        try {
+          showLoading("Excluindo período...");
+          const [c1, c2] = await Promise.all([
+            fbService.deleteByRange("chamados", start, end, "Abertura"),
+            fbService.deleteByRange("satisfacao", start, end, "Data Hora")
+          ]);
+          
+          toast(`${c1 + c2} registros removidos. Recarregando...`, "success");
+          window.location.reload(); // Easier than manual cleanup for complex range filter
+        } catch (err) {
+          console.error(err);
+          toast("Erro ao excluir dados.", "error");
+        } finally {
+          hideLoading();
+        }
+      }
+    } else {
+      // Deletar Tudo
+      if (confirm("⚠️ EXCLUIR TUDO? Esta ação apagará TODOS os dados do banco permanentemente.")) {
+        try {
+          showLoading("Limpando banco...");
+          await Promise.all([
+            fbService.deleteCollection("chamados"),
+            fbService.deleteCollection("satisfacao")
+          ]);
+          
+          UIState.update({ chamados: [], satisfacao: [] });
+          popFilters();
+          renderAll();
+          toast("Todos os dados foram removidos!", "success");
+          document.getElementById("btn-close-delete").click();
+        } catch (err) {
+          console.error(err);
+          toast("Erro ao excluir dados.", "error");
+        } finally {
+          hideLoading();
+        }
+      }
+    }
+  });
+
   document.querySelectorAll(".tabbtn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tabbtn").forEach(b => {
