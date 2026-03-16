@@ -20,7 +20,7 @@ export const MainDashboardLayout = () => {
       <div class="flex items-end justify-between pb-4 border-b border-border flex-wrap gap-3">
         <div class="flex-1 min-w-[200px]">
            <h2 class="font-mono text-[20px] font-bold text-cyan">CHAMADOS DE TI</h2>
-           <p class="text-[12px] text-muted mt-1">SLA · Produtividade · Satisfação · Usuários</p>
+           <p class="text-[12px] text-text font-bold mt-1">SLA · Produtividade · Satisfação · Usuários</p>
         </div>
 
         <div class="flex items-center gap-4 bg-card border border-border2 rounded-lg px-3 py-1.5 shadow-sm">
@@ -40,7 +40,7 @@ export const MainDashboardLayout = () => {
 
       <!-- KPIS PRINCIPAIS -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ KPIs Principais</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ KPIs Principais</p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           ${KpiCard({ title: 'Total de Chamados', value: '—', sub: 'chamados resolvidos', idValue: 'k-total', colorClass: 'text-cyan', borderClass: 'from-cyan to-transparent' })}
           ${KpiCard({ title: 'Tempo Médio Resolução', value: '—', sub: 'por chamado', idValue: 'k-sla', colorClass: 'text-green', borderClass: 'from-green to-transparent' })}
@@ -51,7 +51,7 @@ export const MainDashboardLayout = () => {
 
       <!-- KPIS USUARIOS -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Usuários em Destaque</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Usuários em Destaque</p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           ${KpiCard({ title: 'Total de Usuários', value: '—', sub: 'usuários únicos', idValue: 'k-users', colorClass: 'text-purple', borderClass: 'from-purple to-transparent' })}
           ${KpiCard({ title: 'Usuário Mais Ativo', value: '—', sub: 'chamados', idValue: 'k-topuser', idSub: 'k-topuser-sub', colorClass: 'text-amber !text-[16px] mt-1.5', borderClass: 'from-amber to-transparent' })}
@@ -62,14 +62,14 @@ export const MainDashboardLayout = () => {
 
       <!-- VOLUME CHART -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Volume de Chamados</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Volume de Chamados</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 tracking-wide">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-            <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">📊 Chamados por Atendente</p>
+            <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">📊 Chamados por Atendente</p>
             <div class="h-[280px] w-full"><canvas id="ch-atend"></canvas></div>
           </div>
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-            <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">📂 Top 10 Categorias</p>
+            <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">📂 Top 10 Categorias</p>
             <div class="h-[280px] w-full"><canvas id="ch-setor"></canvas></div>
           </div>
         </div>
@@ -77,33 +77,33 @@ export const MainDashboardLayout = () => {
 
       <!-- USERS LIST -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Chamados por Usuário</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Chamados por Usuário</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-             <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">🏆 Top 20 Usuários <span id="ulabel" class="text-muted font-normal text-[11px]"></span></p>
+             <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">🏆 Top 20 Usuários <span id="ulabel" class="text-muted font-normal text-[11px]"></span></p>
              <div id="rlist" class="flex flex-col gap-1.5 max-h-[360px] overflow-y-auto pr-1"></div>
           </div>
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-             <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">📊 Top 10 Usuários <span class="text-muted font-normal text-[11px]">(volume)</span></p>
+             <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">📊 Top 10 Usuários <span class="text-muted font-normal text-[11px]">(volume)</span></p>
              <div class="h-[320px] w-full"><canvas id="ch-users"></canvas></div>
           </div>
         </div>
         <div class="bg-card border border-border rounded-xl p-5 animate-fade-up mt-3.5">
-           <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">🏢 Top 15 Empresas <span class="text-muted font-normal text-[11px]">(volume)</span></p>
+           <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">🏢 Top 15 Empresas <span class="text-muted font-normal text-[11px]">(volume)</span></p>
            <div class="h-[260px] w-full"><canvas id="ch-emp"></canvas></div>
         </div>
       </section>
 
       <!-- SATISFACAO E SLA -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Satisfação & SLA</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Satisfação & SLA</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-            <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">🍩 Distribuição CSAT <span id="csatlabel" class="text-muted font-normal text-[11px]"></span></p>
+            <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">🍩 Distribuição CSAT <span id="csatlabel" class="text-muted font-normal text-[11px]"></span></p>
             <div class="h-[280px] w-full"><canvas id="ch-csat"></canvas></div>
           </div>
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-            <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">⏱️ Tempo Médio por Atendente</p>
+            <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">⏱️ Tempo Médio por Atendente</p>
             <div class="h-[280px] w-full"><canvas id="ch-sla"></canvas></div>
           </div>
         </div>
@@ -111,14 +111,14 @@ export const MainDashboardLayout = () => {
 
       <!-- EVOLUÇÃO MENSAL -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Evolução Mensal</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Evolução Mensal</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-            <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">📈 Volume Mensal</p>
+            <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">📈 Volume Mensal</p>
             <div class="h-[220px] w-full"><canvas id="ch-vmes"></canvas></div>
           </div>
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-            <p class="font-mono text-[12px] font-semibold mb-4 flex items-center gap-2">📉 Tempo Médio Mensal (min)</p>
+            <p class="font-mono text-[12px] font-bold text-text mb-4 flex items-center gap-2">📉 Tempo Médio Mensal (min)</p>
             <div class="h-[220px] w-full"><canvas id="ch-smes"></canvas></div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export const MainDashboardLayout = () => {
 
       <!-- TABELA BRUTA -->
       <section>
-        <p class="font-mono text-[11px] tracking-[2px] uppercase text-cyan mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Dados Brutos</p>
+        <p class="font-mono text-[11px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Dados Brutos</p>
         <div class="bg-card border border-border rounded-xl overflow-hidden animate-fade-up">
           <div class="flex items-center justify-between p-[16px_20px] border-b border-border gap-3 flex-wrap bg-card">
             <div class="flex gap-2">

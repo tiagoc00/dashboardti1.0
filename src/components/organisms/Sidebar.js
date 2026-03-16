@@ -13,7 +13,7 @@ export const Sidebar = () => {
       <div class="w-[34px] h-[34px] bg-cdim border border-cyan rounded-lg grid place-items-center text-[16px]">🖥️</div>
       <div>
         <h1 class="font-mono text-[13px] font-bold text-cyan leading-tight">DASHBOARD TI</h1>
-        <p class="text-[11px] text-muted">Gestão de Chamados</p>
+        <p class="text-[11px] text-text font-bold">Gestão de Chamados</p>
       </div>
     </div>
 
@@ -30,14 +30,14 @@ export const Sidebar = () => {
 
     ${isAdmin ? `
     <div class="flex flex-col gap-2">
-      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-muted pb-1.5 border-b border-border">Configurações</p>
+      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-text font-bold pb-1.5 border-b border-border">Configurações</p>
       <button id="btn-manage-admins" class="bg-transparent border border-border2 text-muted rounded-lg px-4 py-2 font-mono text-[11px] cursor-pointer w-full transition-all hover:border-cyan hover:text-cyan text-left flex items-center gap-2">
         <span>👑</span> Gerenciar Admins
       </button>
     </div>
 
     <div class="flex flex-col gap-2">
-      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-muted pb-1.5 border-b border-border">Banco de Dados</p>
+      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-text font-bold pb-1.5 border-b border-border">Banco de Dados</p>
       <div id="fbbadge" class="flex items-center gap-2 px-[11px] py-[7px] rounded-lg border border-green text-green bg-green/10 text-[11px] font-mono transition-colors">
         <div class="w-1.5 h-1.5 rounded-full bg-current fbdot"></div>
         <span id="fbstatus">Firebase Conectado</span>
@@ -45,7 +45,7 @@ export const Sidebar = () => {
     </div>
 
     <div class="flex flex-col gap-2">
-      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-muted pb-1.5 border-b border-border">Importar Dados</p>
+      <p class="font-mono text-[10px] tracking-[1.3px] uppercase text-text font-bold pb-1.5 border-b border-border">Importar Dados</p>
       
       <label id="zone-rel" class="border-[1.5px] border-dashed border-border2 rounded-[10px] p-[14px] text-center cursor-pointer transition-all bg-card hover:border-cyan hover:bg-cdim flex flex-col items-center">
         <input type="file" accept=".xlsx,.xls,.csv" id="file-rel" class="hidden" />
@@ -68,7 +68,7 @@ export const Sidebar = () => {
     ` : ''}
 
     <div class="flex flex-col gap-2 relative z-20 pb-4">
-      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-muted pb-1.5 border-b border-border">Filtros Opcionais</p>
+      <p class="font-mono text-[10px] tracking-[1.5px] uppercase text-text font-bold pb-1.5 border-b border-border">Filtros Opcionais</p>
       
       <div class="flex flex-col gap-1.5">
         <label class="text-[10px] text-muted">Atendente</label>
