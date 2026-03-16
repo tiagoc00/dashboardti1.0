@@ -75,6 +75,15 @@ export const MainDashboardLayout = () => {
         </div>
       </section>
 
+      <!-- DIA DA SEMANA -->
+      <section>
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Distribuição Semanal</p>
+        <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
+           <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">📅 Chamados por Dia da Semana</p>
+           <div class="h-[260px] w-full"><canvas id="ch-dow"></canvas></div>
+        </div>
+      </section>
+
       <!-- USERS LIST -->
       <section>
         <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Chamados por Usuário</p>

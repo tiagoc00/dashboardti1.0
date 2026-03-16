@@ -155,6 +155,34 @@ export const ChartService = {
       chartsState.smes = new Chart(ctxSmes, { type: "line", data: { labels: ms, datasets: [{ data: ms.map(m=>+avg(bm[m].map(r=>r._tm).filter(x=>x!=null)).toFixed(1)), borderColor: "#448aff", backgroundColor: "rgba(68,138,255,.06)", fill: true, tension: .3, pointBackgroundColor: "#448aff", pointRadius: 4 }] }, options: lo() });
     }
 
+    ChartService.renderDayOfWeek(ch, chartsState);
     ChartService.renderUsers(ch, chartsState);
+  },
+
+  renderDayOfWeek: (ch, chartsState) => {
+    killC("dow", chartsState);
+    const labels = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    const data = new Array(7).fill(0);
+    ch.forEach(r => { if(r._dw != null) data[r._dw]++; });
+
+    const ctx = document.getElementById("ch-dow")?.getContext("2d");
+    if(ctx) {
+      chartsState.dow = new Chart(ctx, {
+        type: "bar",
+        data: { 
+          labels, 
+          datasets: [{ 
+            data, 
+            backgroundColor: "rgba(218, 13, 23, 0.7)", 
+            borderWidth: 0, 
+            borderRadius: 4 
+          }] 
+        },
+        options: { 
+          ...bOpts(), 
+          plugins: { ...bOpts().plugins, legend: { display: false } } 
+        }
+      });
+    }
   }
 };
