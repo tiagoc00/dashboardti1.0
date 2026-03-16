@@ -58,7 +58,7 @@ export const ChartService = {
     }
   },
 
-  renderCharts: (ch, cs, chartsState) => {
+  renderCharts: (ch, cs, chartsState, onAtendClick) => {
     killC("atend", chartsState);
     const byAtend = groupBy(ch, "Atendente");
     const tat = Object.entries(byAtend).filter(([k]) => k && k !== "—" && k !== "Usuário não identificado").sort((a,b)=>b[1].length-a[1].length);
@@ -67,7 +67,19 @@ export const ChartService = {
       chartsState.atend = new Chart(ctxAtend, {
         type: "bar",
         data: { labels: tat.map(([n])=>n), datasets: [{ data: tat.map(([,a])=>a.length), backgroundColor: tat.map((_,i)=>BC[i%BC.length]+"cc"), borderWidth: 0, borderRadius: 4 }] },
-        options: { ...bOpts(), plugins: { ...bOpts().plugins, legend: { display: false } } }
+        options: { 
+          ...bOpts(), 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          onClick: (e, el) => {
+            if (el.length && onAtendClick) {
+              const idx = el[0].index;
+              onAtendClick(tat[idx][0]);
+            }
+          },
+          onHover: (e, el) => {
+            e.native.target.style.cursor = el.length ? 'pointer' : 'default';
+          }
+        }
       });
     }
 
@@ -112,7 +124,20 @@ export const ChartService = {
       chartsState.sla = new Chart(ctxSla, {
         type: "bar",
         data: { labels: ta.map(e=>e.n), datasets: [{ data: ta.map(e=>+e.m.toFixed(1)), backgroundColor: ta.map(e=>e.m<60?"rgba(0,230,118,0.5)":e.m<120?"rgba(255,196,0,0.5)":"rgba(255,82,82,0.5)"), borderWidth: 0, borderRadius: 4 }] },
-        options: { ...bOpts(), indexAxis: "y", plugins: { ...bOpts().plugins, legend: { display: false } } }
+        options: { 
+          ...bOpts(), 
+          indexAxis: "y", 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          onClick: (e, el) => {
+            if (el.length && onAtendClick) {
+              const idx = el[0].index;
+              onAtendClick(ta[idx].n);
+            }
+          },
+          onHover: (e, el) => {
+            e.native.target.style.cursor = el.length ? 'pointer' : 'default';
+          }
+        }
       });
     }
 

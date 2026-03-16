@@ -70,7 +70,14 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   const renderAll = () => {
     const { ch, cs } = DataService.getFilteredData();
     renderKPIs(ch, cs);
-    ChartService.renderCharts(ch, cs, UIState.get().charts);
+    ChartService.renderCharts(ch, cs, UIState.get().charts, (name) => {
+      const fat = document.getElementById("fat");
+      if (fat) {
+        fat.value = name;
+        UIState.update({ filters: { ...UIState.get().filters, at: name } });
+        renderAll();
+      }
+    });
     TableService.renderTable(ch, cs, UIState.get().tab, document.getElementById("tsearch")?.value || "");
     
     document.getElementById("lupdate").textContent = `Atualizado: ${new Date().toLocaleString("pt-BR")}`;
