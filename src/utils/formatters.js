@@ -8,4 +8,7 @@ export const groupBy = (a, k) => a.reduce((acc, r) => { const kk = r[k] || "&#x2
 export const calcCsat = (a) => { const v = a.filter(r=>r["Avaliação"]); if(!v.length) return 0; return +((v.filter(r=>["Satisfeito","Muito Satisfeito"].includes(r["Avaliação"])).length/v.length)*100).toFixed(1); };
 export const csatClr = (s) => s>=80 ? "#00e676" : s>=60 ? "#ffc400" : "#ff5252";
 export const parseMes = (str) => { const m = String(str||"").match(/(\d{2})\/(\d{2})\/(\d{4})/); return m ? `${m[3]}-${m[2]}` : "&#x2014;"; };
-export const parseDate = (str) => { const m = String(str||"").match(/(\d{2})\/(\d{2})\/(\d{4})/); return m ? new Date(`${m[3]}-${m[2]}-${m[1]}`) : null; };
+export const parseDate = (str) => { 
+  const m = String(str||"").match(/(\d{2})\/(\d{2})\/(\d{4})/); 
+  return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null; 
+};
