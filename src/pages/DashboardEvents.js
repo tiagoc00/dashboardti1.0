@@ -70,18 +70,37 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   const renderAll = () => {
     const { ch, cs } = DataService.getFilteredData();
     renderKPIs(ch, cs);
-    ChartService.renderCharts(ch, cs, UIState.get().charts, (name) => {
-      const fat = document.getElementById("fat");
-      if (fat) {
-        fat.value = name;
+    ChartService.renderCharts(ch, cs, UIState.get().charts, {
+      onAtendClick: (name) => {
+        const fat = document.getElementById("fat");
+        if (fat) fat.value = name;
         UIState.update({ filters: { ...UIState.get().filters, at: name } });
         renderAll();
-      }
-    }, (name) => {
-      const fst = document.getElementById("fst");
-      if (fst) {
-        fst.value = name;
+      },
+      onSetorClick: (name) => {
+        const fst = document.getElementById("fst");
+        if (fst) fst.value = name;
         UIState.update({ filters: { ...UIState.get().filters, st: name } });
+        renderAll();
+      },
+      onUserClick: (name) => {
+        UIState.update({ filters: { ...UIState.get().filters, usr: name } });
+        renderAll();
+      },
+      onEmpClick: (name) => {
+        UIState.update({ filters: { ...UIState.get().filters, emp: name } });
+        renderAll();
+      },
+      onDayClick: (dw) => {
+        UIState.update({ filters: { ...UIState.get().filters, dw: dw } });
+        renderAll();
+      },
+      onMonthClick: (ms) => {
+        UIState.update({ filters: { ...UIState.get().filters, ms: ms } });
+        renderAll();
+      },
+      onCsatClick: (csat) => {
+        UIState.update({ filters: { ...UIState.get().filters, csat: csat } });
         renderAll();
       }
     });
@@ -197,7 +216,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
 
   document.getElementById("btn-reset")?.addEventListener("click", () => {
     ["fat", "fst", "fdi", "fdf"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
-    UIState.update({ filters: { at: "", st: "", di: "", df: "" } });
+    UIState.update({ filters: { at: "", st: "", di: "", df: "", usr: "", emp: "", dw: null, ms: "", csat: "" } });
     renderAll();
   });
 
@@ -399,15 +418,15 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     const sidebar = document.querySelector('aside');
     
     // If clicked on an interactive element (buttons, inputs, etc), don't reset
-    if (e.target.closest('button, select, input, label, canvas, a')) return;
+    if (e.target.closest('button, select, input, label, canvas, a, .user-row')) return;
     
     // Also ignore clicks inside sidebar and modals
     if (e.target.closest('aside, #admins-modal, #delete-data-modal')) return;
 
     // Finally, if click is within main, reset
     if (mainContent && mainContent.contains(e.target)) {
-      const state = UIState.get();
-      if (state.filters.at || state.filters.st || state.filters.di || state.filters.df) {
+      const { filters: f } = UIState.get();
+      if (f.at || f.st || f.di || f.df || f.usr || f.emp || f.dw !== null || f.ms || f.csat) {
         document.getElementById("btn-reset")?.click();
       }
     }

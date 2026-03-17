@@ -22,7 +22,7 @@ export const DataService = {
   
   getFilteredData: () => {
     const state = UIState.get();
-    const { at, st, di, df } = state.filters;
+    const { at, st, di, df, usr, emp, dw, ms, csat } = state.filters;
     let ch = [...state.chamados];
     let cs = [...state.satisfacao];
     
@@ -30,6 +30,11 @@ export const DataService = {
     if(st) ch = ch.filter(r => r._st === st);
     if(di) ch = ch.filter(r => r._dt && r._dt >= new Date(di));
     if(df) ch = ch.filter(r => r._dt && r._dt <= new Date(df));
+    if(usr) ch = ch.filter(r => r["Contato"] === usr);
+    if(emp) ch = ch.filter(r => r["Empresa"] === emp);
+    if(dw !== null && dw !== "") ch = ch.filter(r => r._dw === Number(dw));
+    if(ms) ch = ch.filter(r => r._ms === ms);
+    if(csat) cs = cs.filter(r => r["Avaliação"] === csat);
     
     return { ch, cs };
   }

@@ -19,7 +19,7 @@ export const ChartService = {
       const pc = i===0 ? "text-amber" : i===1 ? "text-[#b0bec5]" : i===2 ? "text-[#a1887f]" : "text-muted";
       
       return `
-      <div class="flex items-center gap-2.5 p-2 bg-surface border border-border rounded-lg transition-colors hover:border-border2">
+      <div class="user-row flex items-center gap-2.5 p-2 bg-surface border border-border rounded-lg transition-colors hover:border-border2 cursor-pointer" data-user="${n}">
         <span class="font-mono text-[11px] font-bold w-5 text-center shrink-0 ${pc}">${i+1}</span>
         <div class="flex-1 min-w-0">
           <p class="text-[12px] whitespace-nowrap overflow-hidden text-ellipsis text-text" title="${n}">${n}</p>
@@ -34,6 +34,10 @@ export const ChartService = {
       </div>`;
     }).join("");
 
+    document.querySelectorAll(".user-row").forEach(el => {
+      el.addEventListener("click", () => chartsState.onUserClick?.(el.dataset.user));
+    });
+
     killC("users", chartsState);
     const top10 = sorted.slice(0,10);
     const ctxUsers = document.getElementById("ch-users")?.getContext("2d");
@@ -41,7 +45,13 @@ export const ChartService = {
       chartsState.users = new Chart(ctxUsers, {
         type: "bar",
         data: { labels: top10.map(([n])=>n), datasets: [{ data: top10.map(([,a])=>a.length), backgroundColor: top10.map((_,i)=>BC[i%BC.length]+"cc"), borderWidth: 0, borderRadius: 4 }] },
-        options: { ...bOpts(), indexAxis: "y", plugins: { ...bOpts().plugins, legend: { display: false } } }
+        options: { 
+          ...bOpts(), 
+          indexAxis: "y", 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          onClick: (e, el) => { if (el.length) chartsState.onUserClick?.(top10[el[0].index][0]); },
+          onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
+        }
       });
     }
 
@@ -53,12 +63,19 @@ export const ChartService = {
       chartsState.emp = new Chart(ctxEmp, {
         type: "bar",
         data: { labels: t15.map(([n])=>n), datasets: [{ data: t15.map(([,a])=>a.length), backgroundColor: "rgba(124, 77, 255, 0.8)", borderWidth: 0, borderRadius: 4 }] },
-        options: { ...bOpts(), indexAxis: "y", plugins: { ...bOpts().plugins, legend: { display: false } } }
+        options: { 
+          ...bOpts(), 
+          indexAxis: "y", 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          onClick: (e, el) => { if (el.length) chartsState.onEmpClick?.(t15[el[0].index][0]); },
+          onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
+        }
       });
     }
   },
 
-  renderCharts: (ch, cs, chartsState, onAtendClick, onSetorClick) => {
+  renderCharts: (ch, cs, chartsState, cb) => {
+    Object.assign(chartsState, cb);
     killC("atend", chartsState);
     const byAtend = groupBy(ch, "Atendente");
     const tat = Object.entries(byAtend).filter(([k]) => k && k !== "—" && k !== "Usuário não identificado").sort((a,b)=>b[1].length-a[1].length);
@@ -71,9 +88,9 @@ export const ChartService = {
           ...bOpts(), 
           plugins: { ...bOpts().plugins, legend: { display: false } },
           onClick: (e, el) => {
-            if (el.length && onAtendClick) {
+            if (el.length && chartsState.onAtendClick) {
               const idx = el[0].index;
-              onAtendClick(tat[idx][0]);
+              chartsState.onAtendClick(tat[idx][0]);
             }
           },
           onHover: (e, el) => {
@@ -95,9 +112,9 @@ export const ChartService = {
           ...bOpts(), 
           plugins: { ...bOpts().plugins, legend: { display: false } },
           onClick: (e, el) => {
-            if (el.length && onSetorClick) {
+            if (el.length && chartsState.onSetorClick) {
               const idx = el[0].index;
-              onSetorClick(tst[idx][0]);
+              chartsState.onSetorClick(tst[idx][0]);
             }
           },
           onHover: (e, el) => {
@@ -123,7 +140,14 @@ export const ChartService = {
          chartsState.csat = new Chart(ctxCsat, {
           type: "doughnut",
           data: { labels: lb, datasets: [{ data: lb.map(l=>bav[l].length), backgroundColor: lb.map(l=>cores[l]+"cc"), borderColor: "rgba(0,0,0,0.2)", borderWidth: 2 }] },
-          options: { responsive: true, maintainAspectRatio: false, cutout: "56%", plugins: { legend: { position: "bottom", labels: { color: TC, font: { family: FM, size: 11 }, padding: 14 } }, tooltip: { backgroundColor: "var(--card)", borderColor: "var(--border2)", borderWidth: 1, titleColor: "var(--text)", bodyColor: "var(--muted)" } } }
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            cutout: "56%", 
+            plugins: { legend: { position: "bottom", labels: { color: TC, font: { family: FM, size: 11 }, padding: 14 } }, tooltip: { backgroundColor: "var(--card)", borderColor: "var(--border2)", borderWidth: 1, titleColor: "var(--text)", bodyColor: "var(--muted)" } },
+            onClick: (e, el) => { if (el.length) chartsState.onCsatClick?.(lb[el[0].index]); },
+            onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
+          }
         });
       }
     }
@@ -141,9 +165,9 @@ export const ChartService = {
           indexAxis: "y", 
           plugins: { ...bOpts().plugins, legend: { display: false } },
           onClick: (e, el) => {
-            if (el.length && onAtendClick) {
+            if (el.length && chartsState.onAtendClick) {
               const idx = el[0].index;
-              onAtendClick(ta[idx].n);
+              chartsState.onAtendClick(ta[idx].n);
             }
           },
           onHover: (e, el) => {
@@ -156,7 +180,14 @@ export const ChartService = {
     killC("vmes", chartsState); killC("smes", chartsState);
     const bm = groupBy(ch, "_ms");
     const ms = Object.keys(bm).filter(m=>m!=="—").sort();
-    const lo = () => ({ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: "var(--card)", borderColor: "var(--border2)", borderWidth: 1, titleColor: "var(--text)", bodyColor: "var(--muted)" } }, scales: { x: { ticks: { color: TC, font: { size: 10 } }, grid: { color: GC } }, y: { ticks: { color: TC, font: { size: 10 } }, grid: { color: GC } } } });
+    const lo = () => ({ 
+      responsive: true, 
+      maintainAspectRatio: false, 
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: "var(--card)", borderColor: "var(--border2)", borderWidth: 1, titleColor: "var(--text)", bodyColor: "var(--muted)" } }, 
+      scales: { x: { ticks: { color: TC, font: { size: 10 } }, grid: { color: GC } }, y: { ticks: { color: TC, font: { size: 10 } }, grid: { color: GC } } },
+      onClick: (e, el) => { if (el.length) chartsState.onMonthClick?.(ms[el[0].index]); },
+      onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
+    });
     
     const ctxVmes = document.getElementById("ch-vmes")?.getContext("2d");
     if(ctxVmes) {
@@ -192,7 +223,9 @@ export const ChartService = {
         },
         options: { 
           ...bOpts(), 
-          plugins: { ...bOpts().plugins, legend: { display: false } } 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          onClick: (e, el) => { if (el.length) chartsState.onDayClick?.(el[0].index); }, // index corresponds to r._dw
+          onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
         }
       });
     }
