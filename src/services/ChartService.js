@@ -58,7 +58,7 @@ export const ChartService = {
     }
   },
 
-  renderCharts: (ch, cs, chartsState, onAtendClick) => {
+  renderCharts: (ch, cs, chartsState, onAtendClick, onSetorClick) => {
     killC("atend", chartsState);
     const byAtend = groupBy(ch, "Atendente");
     const tat = Object.entries(byAtend).filter(([k]) => k && k !== "—" && k !== "Usuário não identificado").sort((a,b)=>b[1].length-a[1].length);
@@ -91,7 +91,19 @@ export const ChartService = {
       chartsState.setor = new Chart(ctxSetor, {
         type: "bar",
         data: { labels: tst.map(([n])=>n), datasets: [{ data: tst.map(([,a])=>a.length), backgroundColor: tst.map((_,i)=>BC[(i+2)%BC.length]+"cc"), borderWidth: 0, borderRadius: 4 }] },
-        options: { ...bOpts(), plugins: { ...bOpts().plugins, legend: { display: false } } }
+        options: { 
+          ...bOpts(), 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          onClick: (e, el) => {
+            if (el.length && onSetorClick) {
+              const idx = el[0].index;
+              onSetorClick(tst[idx][0]);
+            }
+          },
+          onHover: (e, el) => {
+            e.native.target.style.cursor = el.length ? 'pointer' : 'default';
+          }
+        }
       });
     }
 

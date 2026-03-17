@@ -77,6 +77,13 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
         UIState.update({ filters: { ...UIState.get().filters, at: name } });
         renderAll();
       }
+    }, (name) => {
+      const fst = document.getElementById("fst");
+      if (fst) {
+        fst.value = name;
+        UIState.update({ filters: { ...UIState.get().filters, st: name } });
+        renderAll();
+      }
     });
     TableService.renderTable(ch, cs, UIState.get().tab, document.getElementById("tsearch")?.value || "");
     
