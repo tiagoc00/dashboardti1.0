@@ -204,9 +204,15 @@ export const ChartService = {
 
   renderDayOfWeek: (ch, chartsState) => {
     killC("dow", chartsState);
-    const labels = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    const labels = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
     const data = new Array(7).fill(0);
-    ch.forEach(r => { if(r._dw != null) data[r._dw]++; });
+    ch.forEach(r => { 
+      if(r._dw != null) {
+        // Map 0 (Sun) -> index 6, 1 (Mon) -> index 0, etc.
+        const idx = (r._dw + 6) % 7;
+        data[idx]++; 
+      }
+    });
 
     const ctx = document.getElementById("ch-dow")?.getContext("2d");
     if(ctx) {
@@ -224,7 +230,14 @@ export const ChartService = {
         options: { 
           ...bOpts(), 
           plugins: { ...bOpts().plugins, legend: { display: false } },
-          onClick: (e, el) => { if (el.length) chartsState.onDayClick?.(el[0].index); }, // index corresponds to r._dw
+          onClick: (e, el) => { 
+            if (el.length) {
+              const chartIdx = el[0].index;
+              // Map index 0 (Mon) -> _dw 1, index 6 (Sun) -> _dw 0
+              const dwVal = (chartIdx + 1) % 7;
+              chartsState.onDayClick?.(dwVal); 
+            }
+          },
           onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
         }
       });
