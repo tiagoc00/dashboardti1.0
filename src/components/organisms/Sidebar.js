@@ -25,7 +25,10 @@ export const Sidebar = () => {
         <p class="text-[10px] ${isAdmin ? 'text-cyan' : 'text-muted'}">${isAdmin ? 'Administrador' : 'Leitor'}</p>
       </div>
       <button id="btn-logout" class="bg-transparent border-none text-muted text-[14px] p-1 hover:text-red cursor-pointer transition-colors" title="Sair">⎋</button>
-      <button id="theme-btn-app" class="bg-transparent border border-border2 text-muted rounded-lg p-1.5 font-mono text-[11px] cursor-pointer transition-all hover:border-cyan hover:text-cyan" title="Alternar modo">🌙</button>
+      <label class="theme-switch" title="Alternar modo">
+        <input type="checkbox" id="theme-switch-app" ${state.theme === 'light' ? '' : 'checked'}>
+        <span class="t-slider"></span>
+      </label>
     </div>
 
     ${isAdmin ? `

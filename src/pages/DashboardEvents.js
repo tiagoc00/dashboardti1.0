@@ -136,11 +136,9 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   // Events
   document.getElementById('btn-logout')?.addEventListener('click', async () => await fbService.signOut());
   
-  const btnTheme = document.getElementById('theme-btn-app');
-  btnTheme?.addEventListener('click', () => {
-      const isLight = document.body.classList.contains('light-mode');
-      UIState.applyTheme(!isLight);
-      btnTheme.innerHTML = !isLight ? '☀️' : '🌙';
+  const switchTheme = document.getElementById('theme-switch-app');
+  switchTheme?.addEventListener('change', (e) => {
+      UIState.applyTheme(!e.target.checked);
   });
 
   const btnImport = document.getElementById("btn-import");
