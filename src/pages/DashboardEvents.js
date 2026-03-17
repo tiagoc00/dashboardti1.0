@@ -385,4 +385,24 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
       hideLoading();
     }
   });
+
+  // Click Outside to reset filters
+  window.addEventListener('mousedown', (e) => {
+    const mainContent = document.getElementById('main-content');
+    const sidebar = document.querySelector('aside');
+    
+    // If clicked on an interactive element (buttons, inputs, etc), don't reset
+    if (e.target.closest('button, select, input, label, canvas, a')) return;
+    
+    // Also ignore clicks inside sidebar and modals
+    if (e.target.closest('aside, #admins-modal, #delete-data-modal')) return;
+
+    // Finally, if click is within main, reset
+    if (mainContent && mainContent.contains(e.target)) {
+      const state = UIState.get();
+      if (state.filters.at || state.filters.st || state.filters.di || state.filters.df) {
+        document.getElementById("btn-reset")?.click();
+      }
+    }
+  });
 }
