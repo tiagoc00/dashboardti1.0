@@ -8,7 +8,17 @@ export const Sidebar = () => {
   const avatar = email[0]?.toUpperCase() || 'U';
 
   return `
-  <aside class="w-[272px] shrink-0 bg-surface border-r border-border flex flex-col py-6 px-[18px] gap-5 sticky top-0 h-screen overflow-y-auto hidden md:flex">
+  <!-- HAMBURGER BUTTON (Mobile) -->
+  <button id="hamburger-btn" class="hamburger-btn" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- MOBILE OVERLAY -->
+  <div id="mobile-overlay" class="mobile-overlay"></div>
+
+  <aside id="sidebar" class="sidebar-mobile w-[272px] shrink-0 bg-surface border-r border-border flex flex-col py-6 px-[18px] gap-5 sticky top-0 h-screen overflow-y-auto hidden md:flex">
     <div class="flex items-center gap-2.5">
       <div class="w-[34px] h-[34px] bg-cdim border border-cyan rounded-lg grid place-items-center text-[16px]">🖥️</div>
       <div>
@@ -86,8 +96,6 @@ export const Sidebar = () => {
           <option value="">Todos</option>
         </select>
       </div>
-
-
 
       <button id="btn-reset" class="mt-1 bg-transparent border border-border2 text-muted rounded-lg px-4 py-[7px] font-mono text-[11px] cursor-pointer w-full transition-all hover:border-cyan hover:text-cyan flex items-center justify-center gap-1.5">↺ Limpar Tudo</button>
     </div>

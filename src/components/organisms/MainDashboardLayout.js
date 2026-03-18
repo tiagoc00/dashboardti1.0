@@ -1,37 +1,77 @@
-import { KpiCard } from '../molecules/KpiCard.js';
+import { KpiCard, KpiCardSkeleton } from '../molecules/KpiCard.js';
 
 export const MainDashboardLayout = () => {
   return `
   <main class="flex-1 p-4 md:p-8 flex flex-col gap-7 min-w-0" id="main-content">
     
-    <!-- EMPTY STATE -->
-    <div id="estate" class="flex-1 flex flex-col items-center justify-center gap-4 text-center p-14 h-full">
-      <div class="text-[52px]">☁️</div>
-      <h3 class="font-mono text-lg text-cyan">Nenhum dado carregado</h3>
-      <p class="text-[13px] text-muted max-w-[420px] leading-relaxed">
-        Faça upload dos arquivos na barra lateral e clique em <strong class="text-cyan font-bold">Importar</strong>.
-      </p>
+    <!-- EMPTY STATE / SKELETON LOADING -->
+    <div id="estate" class="flex-1 flex flex-col gap-7">
+      <!-- Skeleton KPIs -->
+      <section>
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ KPIs Principais</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          ${KpiCardSkeleton()}${KpiCardSkeleton()}${KpiCardSkeleton()}${KpiCardSkeleton()}
+        </div>
+      </section>
+      <section>
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Usuários em Destaque</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          ${KpiCardSkeleton()}${KpiCardSkeleton()}${KpiCardSkeleton()}${KpiCardSkeleton()}
+        </div>
+      </section>
+      <section>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+          <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
+            <div class="skeleton" style="height:14px;width:40%;margin-bottom:16px"></div>
+            <div class="skeleton skeleton-chart"></div>
+          </div>
+          <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
+            <div class="skeleton" style="height:14px;width:40%;margin-bottom:16px"></div>
+            <div class="skeleton skeleton-chart"></div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <!-- DASHBOARD RENDER -->
     <div id="dash" class="hidden flex-col gap-7">
       
-      <!-- HEADER FILTERS (Mobile mostly / Time range) -->
+      <!-- HEADER FILTERS -->
       <div class="flex items-end justify-between pb-4 border-b border-border flex-wrap gap-3">
         <div class="flex-1 min-w-[200px]">
            <h2 class="font-mono text-[20px] font-bold text-cyan">CHAMADOS DE TI</h2>
            <p class="text-[14px] text-text font-bold mt-1">SLA · Produtividade · Satisfação · Usuários</p>
         </div>
 
-        <div class="flex items-center gap-4 bg-card border border-border2 rounded-lg px-3 py-1.5 shadow-sm">
-          <div class="flex items-center gap-2">
-            <label class="text-[10px] text-muted font-mono uppercase tracking-[1px]">De</label>
-            <input type="date" id="fdi" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex items-center gap-4 bg-card border border-border2 rounded-lg px-3 py-1.5 shadow-sm">
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] text-muted font-mono uppercase tracking-[1px]">De</label>
+              <input type="date" id="fdi" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+            </div>
+            <div class="w-px h-4 bg-border2"></div>
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] text-muted font-mono uppercase tracking-[1px]">Ate</label>
+              <input type="date" id="fdf" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+            </div>
           </div>
-          <div class="w-px h-4 bg-border2"></div>
-          <div class="flex items-center gap-2">
-            <label class="text-[10px] text-muted font-mono uppercase tracking-[1px]">Ate</label>
-            <input type="date" id="fdf" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+
+          <!-- EXPORT DROPDOWN -->
+          <div class="export-dropdown">
+            <button id="btn-export-toggle" class="bg-card border border-border2 text-text rounded-lg px-3 py-1.5 font-mono text-[11px] cursor-pointer transition-all hover:border-cyan hover:text-cyan flex items-center gap-1.5 shadow-sm">
+              📥 Exportar
+            </button>
+            <div id="export-menu" class="export-menu">
+              <button id="btn-export-excel" class="export-item">
+                <span>📊</span> Exportar Excel (.xlsx)
+              </button>
+              <button id="btn-export-pdf" class="export-item">
+                <span>📄</span> Exportar PDF (Visual)
+              </button>
+              <button id="btn-print" class="export-item">
+                <span>🖨️</span> Imprimir Dashboard
+              </button>
+            </div>
           </div>
         </div>
 
@@ -42,10 +82,10 @@ export const MainDashboardLayout = () => {
       <section>
         <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ KPIs Principais</p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-          ${KpiCard({ title: 'Total de Chamados', value: '—', sub: 'chamados resolvidos', idValue: 'k-total', colorClass: 'text-cyan', borderClass: 'from-cyan to-transparent' })}
-          ${KpiCard({ title: 'Tempo Médio Resolução', value: '—', sub: 'por chamado', idValue: 'k-sla', colorClass: 'text-green', borderClass: 'from-green to-transparent' })}
-          ${KpiCard({ title: 'Tempo Médio na Fila', value: '—', sub: 'aguardando atendimento', idValue: 'k-fila', colorClass: 'text-amber', borderClass: 'from-amber to-transparent' })}
-          ${KpiCard({ title: 'CSAT Score', value: '—', sub: 'avaliações', idValue: 'k-csat', idSub: 'k-csat-sub', colorClass: 'text-blue', borderClass: 'from-blue to-transparent' })}
+          ${KpiCard({ title: 'Total de Chamados', value: '—', sub: 'chamados resolvidos', idValue: 'k-total', idTrend: 'k-total-trend', colorClass: 'text-cyan', borderClass: 'from-cyan to-transparent' })}
+          ${KpiCard({ title: 'Tempo Médio Resolução', value: '—', sub: 'por chamado', idValue: 'k-sla', idTrend: 'k-sla-trend', colorClass: 'text-green', borderClass: 'from-green to-transparent' })}
+          ${KpiCard({ title: 'Tempo Médio na Fila', value: '—', sub: 'aguardando atendimento', idValue: 'k-fila', idTrend: 'k-fila-trend', colorClass: 'text-amber', borderClass: 'from-amber to-transparent' })}
+          ${KpiCard({ title: 'CSAT Score', value: '—', sub: 'avaliações', idValue: 'k-csat', idSub: 'k-csat-sub', idTrend: 'k-csat-trend', colorClass: 'text-blue', borderClass: 'from-blue to-transparent' })}
         </div>
       </section>
 
@@ -53,7 +93,7 @@ export const MainDashboardLayout = () => {
       <section>
         <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Usuários em Destaque</p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-          ${KpiCard({ title: 'Total de Usuários', value: '—', sub: 'usuários únicos', idValue: 'k-users', colorClass: 'text-purple', borderClass: 'from-purple to-transparent' })}
+          ${KpiCard({ title: 'Total de Usuários', value: '—', sub: 'usuários únicos', idValue: 'k-users', idTrend: 'k-users-trend', colorClass: 'text-purple', borderClass: 'from-purple to-transparent' })}
           ${KpiCard({ title: 'Usuário Mais Ativo', value: '—', sub: 'chamados', idValue: 'k-topuser', idSub: 'k-topuser-sub', colorClass: 'text-amber !text-[16px] mt-1.5', borderClass: 'from-amber to-transparent' })}
           ${KpiCard({ title: 'Média por Usuário', value: '—', sub: 'chamados/usuário', idValue: 'k-avguser', colorClass: 'text-cyan', borderClass: 'from-cyan to-transparent' })}
           ${KpiCard({ title: 'Empresa Mais Ativa', value: '—', sub: 'chamados', idValue: 'k-topemp', idSub: 'k-topemp-sub', colorClass: 'text-green !text-[16px] mt-1.5', borderClass: 'from-green to-transparent' })}
@@ -75,12 +115,18 @@ export const MainDashboardLayout = () => {
         </div>
       </section>
 
-      <!-- DIA DA SEMANA -->
+      <!-- DIA DA SEMANA + HEATMAP -->
       <section>
         <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Distribuição Semanal</p>
-        <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
-           <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">📅 Chamados por Dia da Semana</p>
-           <div class="h-[260px] w-full"><canvas id="ch-dow"></canvas></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+          <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
+             <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">📅 Chamados por Dia da Semana</p>
+             <div class="h-[260px] w-full"><canvas id="ch-dow"></canvas></div>
+          </div>
+          <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
+             <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">🔥 Heatmap — Horários de Pico</p>
+             <div id="heatmap-container" class="w-full overflow-x-auto"></div>
+          </div>
         </div>
       </section>
 
@@ -151,7 +197,7 @@ export const MainDashboardLayout = () => {
               <tbody id="tblbody"></tbody>
             </table>
           </div>
-          <div id="tblfooter" class="p-[10px_20px] border-t border-border text-[11px] text-muted font-mono bg-card"></div>
+          <div id="tblfooter" class="p-[10px_20px] border-t border-border text-[11px] text-muted font-mono bg-card flex items-center justify-between gap-4 flex-wrap"></div>
         </div>
       </section>
 

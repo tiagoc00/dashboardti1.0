@@ -124,7 +124,6 @@ export const ChartService = {
       });
     }
 
-    // ... code intentionally omitted ...
     killC("csat", chartsState);
     if(cs.length) {
       const ord = ["Muito Satisfeito", "Satisfeito", "Indiferente", "Insatisfeito"];
@@ -199,6 +198,7 @@ export const ChartService = {
     }
 
     ChartService.renderDayOfWeek(ch, chartsState);
+    ChartService.renderHeatmap(ch);
     ChartService.renderUsers(ch, chartsState);
   },
 
@@ -208,7 +208,6 @@ export const ChartService = {
     const data = new Array(7).fill(0);
     ch.forEach(r => { 
       if(r._dw != null) {
-        // Map 0 (Sun) -> index 6, 1 (Mon) -> index 0, etc.
         const idx = (r._dw + 6) % 7;
         data[idx]++; 
       }
@@ -233,7 +232,6 @@ export const ChartService = {
           onClick: (e, el) => { 
             if (el.length) {
               const chartIdx = el[0].index;
-              // Map index 0 (Mon) -> _dw 1, index 6 (Sun) -> _dw 0
               const dwVal = (chartIdx + 1) % 7;
               chartsState.onDayClick?.(dwVal); 
             }
@@ -242,5 +240,94 @@ export const ChartService = {
         }
       });
     }
+  },
+
+  /**
+   * Render Heatmap: Days of Week × Hours of Day
+   */
+  renderHeatmap: (ch) => {
+    const container = document.getElementById("heatmap-container");
+    if (!container) return;
+
+    const dayLabels = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+    const hourStart = 7;
+    const hourEnd = 18;
+    const hours = [];
+    for (let h = hourStart; h <= hourEnd; h++) hours.push(h);
+
+    // Build data matrix: [dayIndex][hourIndex] = count
+    const matrix = Array.from({ length: 7 }, () => new Array(hours.length).fill(0));
+    let maxVal = 0;
+
+    ch.forEach(r => {
+      if (r._dt && r._dw != null) {
+        const dayIdx = (r._dw + 6) % 7; // Mon=0 ... Sun=6
+        // Try to extract hour from Abertura string
+        const timeMatch = String(r["Abertura"] || "").match(/(\d{2}):(\d{2})/);
+        if (timeMatch) {
+          const hour = parseInt(timeMatch[1], 10);
+          const hIdx = hours.indexOf(hour);
+          if (hIdx >= 0) {
+            matrix[dayIdx][hIdx]++;
+            if (matrix[dayIdx][hIdx] > maxVal) maxVal = matrix[dayIdx][hIdx];
+          }
+        }
+      }
+    });
+
+    // If no data has time info, show message
+    if (maxVal === 0) {
+      container.innerHTML = `<div class="text-center text-muted text-[11px] font-mono py-12">Dados de horário não disponíveis nos registros.</div>`;
+      return;
+    }
+
+    // Color interpolation function
+    const getColor = (val) => {
+      if (val === 0) return 'var(--surface)';
+      const intensity = val / maxVal;
+      if (intensity < 0.25) return 'rgba(79, 112, 67, 0.4)';      // low green
+      if (intensity < 0.5) return 'rgba(79, 112, 67, 0.7)';       // mid green
+      if (intensity < 0.75) return 'rgba(218, 85, 19, 0.7)';      // amber
+      return 'rgba(218, 13, 23, 0.8)';                             // red/hot
+    };
+
+    const colCount = hours.length;
+    let html = `<div class="heatmap-grid" style="--cols: ${colCount}">`;
+    
+    // Header row
+    html += `<div class="heatmap-header"></div>`;
+    hours.forEach(h => {
+      html += `<div class="heatmap-header">${h}h</div>`;
+    });
+
+    // Data rows
+    dayLabels.forEach((day, dIdx) => {
+      html += `<div class="heatmap-label">${day}</div>`;
+      hours.forEach((_, hIdx) => {
+        const val = matrix[dIdx][hIdx];
+        const bg = getColor(val);
+        const tooltip = `${day} ${hours[hIdx]}h: ${val} chamado${val !== 1 ? 's' : ''}`;
+        html += `<div class="heatmap-cell" style="background:${bg}" title="${tooltip}">${val || ''}</div>`;
+      });
+    });
+
+    html += `</div>`;
+
+    // Legend
+    html += `
+      <div class="flex items-center justify-center gap-3 mt-4 text-[9px] font-mono text-muted">
+        <span>Menos</span>
+        <div class="flex gap-1">
+          <div class="w-4 h-4 rounded" style="background:var(--surface);border:1px solid var(--border)"></div>
+          <div class="w-4 h-4 rounded" style="background:rgba(79,112,67,0.4)"></div>
+          <div class="w-4 h-4 rounded" style="background:rgba(79,112,67,0.7)"></div>
+          <div class="w-4 h-4 rounded" style="background:rgba(218,85,19,0.7)"></div>
+          <div class="w-4 h-4 rounded" style="background:rgba(218,13,23,0.8)"></div>
+        </div>
+        <span>Mais</span>
+      </div>
+    `;
+
+    container.innerHTML = html;
   }
 };

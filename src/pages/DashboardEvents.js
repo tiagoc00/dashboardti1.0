@@ -2,7 +2,9 @@ import { UIState } from '../services/UIState.js';
 import { DataService } from '../services/DataService.js';
 import { ChartService } from '../services/ChartService.js';
 import { TableService } from '../services/TableService.js';
+import { ExportService } from '../services/ExportService.js';
 import { fmtMin, avg, calcCsat, csatClr, groupBy } from '../utils/formatters.js';
+import { animateKpiValue, renderTrend, renderTrendInverse } from '../utils/animations.js';
 
 const readFile = (file) => new Promise((res, rej) => {
   const r = new FileReader();
@@ -16,9 +18,124 @@ const readFile = (file) => new Promise((res, rej) => {
   r.readAsArrayBuffer(file);
 });
 
+// Store previous period values for comparison
+let prevPeriodData = null;
+
 export function attachDashboardEvents(fbService, showLoading, hideLoading, toast) {
+  
+  // =============================================
+  // MOBILE HAMBURGER MENU
+  // =============================================
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const sidebar = document.getElementById('sidebar');
+  const mobileOverlay = document.getElementById('mobile-overlay');
+
+  const toggleMobileMenu = (open) => {
+    if (open) {
+      sidebar?.classList.add('open');
+      hamburgerBtn?.classList.add('active');
+      mobileOverlay?.classList.add('active');
+    } else {
+      sidebar?.classList.remove('open');
+      hamburgerBtn?.classList.remove('active');
+      mobileOverlay?.classList.remove('active');
+    }
+  };
+
+  hamburgerBtn?.addEventListener('click', () => {
+    const isOpen = sidebar?.classList.contains('open');
+    toggleMobileMenu(!isOpen);
+  });
+
+  mobileOverlay?.addEventListener('click', () => toggleMobileMenu(false));
+
+  // =============================================
+  // EXPORT FUNCTIONALITY
+  // =============================================
+  const exportToggle = document.getElementById('btn-export-toggle');
+  const exportMenu = document.getElementById('export-menu');
+
+  exportToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    exportMenu?.classList.toggle('open');
+  });
+
+  // Close export menu on click outside
+  document.addEventListener('click', () => {
+    exportMenu?.classList.remove('open');
+  });
+
+  document.getElementById('btn-export-excel')?.addEventListener('click', () => {
+    const { ch, cs } = DataService.getFilteredData();
+    if (!ch.length && !cs.length) { toast('Nenhum dado para exportar.', 'error'); return; }
+    ExportService.exportExcel(ch, cs);
+    toast('Excel exportado com sucesso!', 'success');
+    exportMenu?.classList.remove('open');
+  });
+
+  document.getElementById('btn-export-pdf')?.addEventListener('click', () => {
+    exportMenu?.classList.remove('open');
+    ExportService.exportPDF(showLoading, hideLoading, toast);
+  });
+
+  document.getElementById('btn-print')?.addEventListener('click', () => {
+    exportMenu?.classList.remove('open');
+    window.print();
+  });
+
+  // =============================================
+  // COMPUTE PREVIOUS PERIOD FOR COMPARISON
+  // =============================================
+  const computePreviousPeriod = () => {
+    const state = UIState.get();
+    const allCh = state.chamados;
+    const allCs = state.satisfacao;
+    const { di, df } = state.filters;
+
+    if (!allCh.length) { prevPeriodData = null; return; }
+
+    // Calculate the current filtered date range
+    let startDate, endDate;
+    
+    if (di && df) {
+      startDate = new Date(di);
+      endDate = new Date(df);
+    } else {
+      // Use the actual data range
+      const dates = allCh.filter(r => r._dt).map(r => r._dt.getTime());
+      if (!dates.length) { prevPeriodData = null; return; }
+      startDate = new Date(Math.min(...dates));
+      endDate = new Date(Math.max(...dates));
+    }
+
+    const rangeDays = Math.max(1, Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)));
+    const prevEnd = new Date(startDate.getTime() - (1000 * 60 * 60 * 24)); // day before start
+    const prevStart = new Date(prevEnd.getTime() - (rangeDays * 1000 * 60 * 60 * 24));
+
+    const prevCh = allCh.filter(r => r._dt && r._dt >= prevStart && r._dt <= prevEnd);
+    const prevCs = allCs; // CSAT doesn't have easy date comparison
+
+    if (!prevCh.length) { prevPeriodData = null; return; }
+
+    const prevTm = avg(prevCh.map(r => r._tm).filter(v => v != null));
+    const prevFm = avg(prevCh.map(r => r._fm).filter(v => v != null));
+    const prevUsers = Object.keys(groupBy(prevCh, "Contato")).filter(k => k && k !== "Usuário não identificado").length;
+
+    prevPeriodData = {
+      total: prevCh.length,
+      tm: prevTm,
+      fm: prevFm,
+      users: prevUsers,
+      csat: calcCsat(prevCs)
+    };
+  };
+
+  // =============================================
+  // RENDER KPIs WITH ANIMATIONS
+  // =============================================
   const renderKPIs = (ch, cs) => {
-    document.getElementById("k-total").textContent = ch.length.toLocaleString("pt-BR");
+    const total = ch.length;
+    animateKpiValue("k-total", total, { suffix: '' });
     
     const tm = avg(ch.map(r => r._tm).filter(v => v != null));
     const se = document.getElementById("k-sla");
@@ -43,7 +160,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     const ee = Object.entries(be).filter(([k]) => k && k !== "—").sort((a,b)=>b[1].length-a[1].length);
     
     const totalUsers = Object.keys(bu).filter(k=>k && k!=="Usuário não identificado").length;
-    document.getElementById("k-users").textContent = totalUsers.toLocaleString("pt-BR");
+    animateKpiValue("k-users", totalUsers, { suffix: '' });
     
     if(ue.length) {
       document.getElementById("k-topuser").textContent = ue[0][0];
@@ -55,6 +172,24 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
       document.getElementById("k-topemp").textContent = ee[0][0] === "&#x2014;" || ee[0][0] === "—" ? "USER SEM EMPRESA CADASTRADA" : ee[0][0];
       const ktopempSub = document.getElementById("k-topemp-sub");
       if(ktopempSub) ktopempSub.textContent = `${ee[0][1].length.toLocaleString("pt-BR")} chamados`;
+    }
+
+    // Render trend indicators (comparison with previous period)
+    if (prevPeriodData) {
+      const tTotalTrend = document.getElementById("k-total-trend");
+      if (tTotalTrend) tTotalTrend.innerHTML = renderTrend(total, prevPeriodData.total);
+
+      const tSlaTrend = document.getElementById("k-sla-trend");
+      if (tSlaTrend) tSlaTrend.innerHTML = renderTrendInverse(tm, prevPeriodData.tm);
+
+      const tFilaTrend = document.getElementById("k-fila-trend");
+      if (tFilaTrend) tFilaTrend.innerHTML = renderTrendInverse(fm, prevPeriodData.fm);
+
+      const tCsatTrend = document.getElementById("k-csat-trend");
+      if (tCsatTrend) tCsatTrend.innerHTML = renderTrend(sc, prevPeriodData.csat);
+
+      const tUsersTrend = document.getElementById("k-users-trend");
+      if (tUsersTrend) tUsersTrend.innerHTML = renderTrend(totalUsers, prevPeriodData.users);
     }
   };
 
@@ -68,6 +203,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   };
 
   const renderAll = () => {
+    computePreviousPeriod();
     const { ch, cs } = DataService.getFilteredData();
     renderKPIs(ch, cs);
     ChartService.renderCharts(ch, cs, UIState.get().charts, {
@@ -208,6 +344,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   ["fat", "fst", "fdi", "fdf"].forEach(id => {
     document.getElementById(id)?.addEventListener("change", e => {
       UIState.update({ filters: { ...UIState.get().filters, [id.replace('f', '')]: e.target.value } });
+      TableService.resetPage();
       renderAll();
     });
   });
@@ -215,6 +352,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   document.getElementById("btn-reset")?.addEventListener("click", () => {
     ["fat", "fst", "fdi", "fdf"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
     UIState.update({ filters: { at: "", st: "", di: "", df: "", usr: "", emp: "", dw: null, ms: "", csat: "" } });
+    TableService.resetPage();
     renderAll();
   });
 
@@ -277,7 +415,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
           ]);
           
           toast(`${c1 + c2} registros removidos. Recarregando...`, "success");
-          window.location.reload(); // Easier than manual cleanup for complex range filter
+          window.location.reload();
         } catch (err) {
           console.error(err);
           toast("Erro ao excluir dados.", "error");
@@ -286,7 +424,6 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
         }
       }
     } else {
-      // Deletar Tudo
       if (confirm("⚠️ EXCLUIR TUDO? Esta ação apagará TODOS os dados do banco permanentemente.")) {
         try {
           showLoading("Limpando banco...");
@@ -319,6 +456,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
       UIState.update({ tab: btn.dataset.tab });
       const ts = document.getElementById("tsearch");
       if(ts) ts.value = "";
+      TableService.resetPage();
       TableService.renderTable(UIState.get().chamados, UIState.get().satisfacao, UIState.get().tab, "");
     });
   });
@@ -415,13 +553,9 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     const mainContent = document.getElementById('main-content');
     const sidebar = document.querySelector('aside');
     
-    // If clicked on an interactive element (buttons, inputs, etc), don't reset
-    if (e.target.closest('button, select, input, label, canvas, a, .user-row')) return;
-    
-    // Also ignore clicks inside sidebar and modals
+    if (e.target.closest('button, select, input, label, canvas, a, .user-row, .pg-btn, .sortable-header, .export-dropdown')) return;
     if (e.target.closest('aside, #admins-modal, #delete-data-modal')) return;
 
-    // Finally, if click is within main, reset
     if (mainContent && mainContent.contains(e.target)) {
       const { filters: f } = UIState.get();
       if (f.at || f.st || f.di || f.df || f.usr || f.emp || f.dw !== null || f.ms || f.csat) {
