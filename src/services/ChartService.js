@@ -243,7 +243,7 @@ export const ChartService = {
   },
 
   /**
-   * Render Heatmap: Days of Week × Hours of Day
+   * Render Heatmap: Days of Week × Hours of Day — table-based with scroll
    */
   renderHeatmap: (ch) => {
     const container = document.getElementById("heatmap-container");
@@ -261,8 +261,7 @@ export const ChartService = {
 
     ch.forEach(r => {
       if (r._dt && r._dw != null) {
-        const dayIdx = (r._dw + 6) % 7; // Mon=0 ... Sun=6
-        // Try to extract hour from Abertura string
+        const dayIdx = (r._dw + 6) % 7;
         const timeMatch = String(r["Abertura"] || "").match(/(\d{2}):(\d{2})/);
         if (timeMatch) {
           const hour = parseInt(timeMatch[1], 10);
@@ -275,54 +274,59 @@ export const ChartService = {
       }
     });
 
-    // If no data has time info, show message
     if (maxVal === 0) {
       container.innerHTML = `<div class="text-center text-muted text-[11px] font-mono py-12">Dados de horário não disponíveis nos registros.</div>`;
       return;
     }
 
-    // Color interpolation function
     const getColor = (val) => {
       if (val === 0) return 'var(--surface)';
       const intensity = val / maxVal;
-      if (intensity < 0.25) return 'rgba(79, 112, 67, 0.4)';      // low green
-      if (intensity < 0.5) return 'rgba(79, 112, 67, 0.7)';       // mid green
-      if (intensity < 0.75) return 'rgba(218, 85, 19, 0.7)';      // amber
-      return 'rgba(218, 13, 23, 0.8)';                             // red/hot
+      if (intensity < 0.25) return 'rgba(79, 112, 67, 0.4)';
+      if (intensity < 0.5) return 'rgba(79, 112, 67, 0.7)';
+      if (intensity < 0.75) return 'rgba(218, 85, 19, 0.7)';
+      return 'rgba(218, 13, 23, 0.8)';
     };
 
-    const colCount = hours.length;
-    let html = `<div class="heatmap-grid" style="--cols: ${colCount}">`;
-    
-    // Header row
-    html += `<div class="heatmap-header"></div>`;
+    // Build as HTML table inside scrollable container
+    let html = `<div style="overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--border);border-radius:8px;">`;
+    html += `<table style="border-collapse:separate;border-spacing:3px;width:100%;min-width:480px;">`;
+
+    // Header row: empty corner + hour labels
+    html += `<thead><tr>`;
+    html += `<th style="position:sticky;left:0;z-index:2;background:var(--card);padding:4px 8px;font-size:10px;color:var(--muted);font-weight:600;font-family:'IBM Plex Mono',monospace;min-width:48px;"></th>`;
     hours.forEach(h => {
-      html += `<div class="heatmap-header">${h}h</div>`;
+      html += `<th style="padding:4px 2px;font-size:10px;color:var(--muted);font-weight:600;font-family:'IBM Plex Mono',monospace;text-align:center;white-space:nowrap;">${h}h</th>`;
     });
+    html += `</tr></thead>`;
 
     // Data rows
+    html += `<tbody>`;
     dayLabels.forEach((day, dIdx) => {
-      html += `<div class="heatmap-label">${day}</div>`;
+      html += `<tr>`;
+      // Day label (sticky first column)
+      html += `<td style="position:sticky;left:0;z-index:1;background:var(--card);padding:4px 8px;font-size:10px;color:var(--muted);font-weight:500;font-family:'IBM Plex Mono',monospace;text-align:right;white-space:nowrap;">${day}</td>`;
+      // Cells
       hours.forEach((_, hIdx) => {
         const val = matrix[dIdx][hIdx];
         const bg = getColor(val);
         const tooltip = `${day} ${hours[hIdx]}h: ${val} chamado${val !== 1 ? 's' : ''}`;
-        html += `<div class="heatmap-cell" style="background:${bg}" title="${tooltip}">${val || ''}</div>`;
+        html += `<td style="background:${bg};border-radius:4px;text-align:center;font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--text);padding:6px 4px;min-width:36px;cursor:default;transition:transform 0.15s ease;" title="${tooltip}" onmouseenter="this.style.transform='scale(1.1)';this.style.zIndex='5'" onmouseleave="this.style.transform='scale(1)';this.style.zIndex='0'">${val || ''}</td>`;
       });
+      html += `</tr>`;
     });
-
-    html += `</div>`;
+    html += `</tbody></table></div>`;
 
     // Legend
     html += `
-      <div class="flex items-center justify-center gap-3 mt-4 text-[9px] font-mono text-muted">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--muted);">
         <span>Menos</span>
-        <div class="flex gap-1">
-          <div class="w-4 h-4 rounded" style="background:var(--surface);border:1px solid var(--border)"></div>
-          <div class="w-4 h-4 rounded" style="background:rgba(79,112,67,0.4)"></div>
-          <div class="w-4 h-4 rounded" style="background:rgba(79,112,67,0.7)"></div>
-          <div class="w-4 h-4 rounded" style="background:rgba(218,85,19,0.7)"></div>
-          <div class="w-4 h-4 rounded" style="background:rgba(218,13,23,0.8)"></div>
+        <div style="display:flex;gap:3px;">
+          <div style="width:14px;height:14px;border-radius:3px;background:var(--surface);border:1px solid var(--border)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(79,112,67,0.4)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(79,112,67,0.7)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(218,85,19,0.7)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(218,13,23,0.8)"></div>
         </div>
         <span>Mais</span>
       </div>
