@@ -23,4 +23,4 @@ export const bOpts = (ex = {}) => ({
   ...ex
 });
 
-export const BC = ["#DA0D17", "#DA5513", "#4F7043", "#265D7C", "#56331B", "#F29C94", "#c20b13", "#b8450f", "#3d5834", "#1e4a61", "#8B4513"];
+export const BC = ["#FF3B3B", "#FF9F43", "#6ECB63", "#5BA4CF", "#C4956A", "#FF6B6B", "#E63535", "#E08830", "#5AB850", "#4A8DB8", "#D4A574"];

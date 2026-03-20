@@ -221,7 +221,7 @@ export const ChartService = {
           labels, 
           datasets: [{ 
             data, 
-            backgroundColor: "rgba(218, 13, 23, 0.7)", 
+            backgroundColor: "rgba(255, 59, 59, 0.7)", 
             borderWidth: 0, 
             borderRadius: 4 
           }] 
@@ -282,10 +282,10 @@ export const ChartService = {
     const getColor = (val) => {
       if (val === 0) return 'var(--surface)';
       const intensity = val / maxVal;
-      if (intensity < 0.25) return 'rgba(79, 112, 67, 0.4)';
-      if (intensity < 0.5) return 'rgba(79, 112, 67, 0.7)';
-      if (intensity < 0.75) return 'rgba(218, 85, 19, 0.7)';
-      return 'rgba(218, 13, 23, 0.8)';
+      if (intensity < 0.25) return 'rgba(110, 203, 99, 0.4)';
+      if (intensity < 0.5) return 'rgba(110, 203, 99, 0.7)';
+      if (intensity < 0.75) return 'rgba(255, 159, 67, 0.7)';
+      return 'rgba(255, 59, 59, 0.8)';
     };
 
     // Build as HTML table inside scrollable container
@@ -323,10 +323,10 @@ export const ChartService = {
         <span>Menos</span>
         <div style="display:flex;gap:3px;">
           <div style="width:14px;height:14px;border-radius:3px;background:var(--surface);border:1px solid var(--border)"></div>
-          <div style="width:14px;height:14px;border-radius:3px;background:rgba(79,112,67,0.4)"></div>
-          <div style="width:14px;height:14px;border-radius:3px;background:rgba(79,112,67,0.7)"></div>
-          <div style="width:14px;height:14px;border-radius:3px;background:rgba(218,85,19,0.7)"></div>
-          <div style="width:14px;height:14px;border-radius:3px;background:rgba(218,13,23,0.8)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(110,203,99,0.4)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(110,203,99,0.7)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(255,159,67,0.7)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(255,59,59,0.8)"></div>
         </div>
         <span>Mais</span>
       </div>

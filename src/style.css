@@ -4,15 +4,15 @@
   --card: #18181A;
   --border: #26262A;
   --border2: #333338;
-  --cyan: #DA0D17;
-  --cdim: rgba(218, 13, 23, .10);
-  --green: #4F7043;
-  --amber: #DA5513;
-  --red: #F29C94;
-  --blue: #265D7C;
-  --purple: #56331B;
+  --cyan: #FF3B3B;
+  --cdim: rgba(255, 59, 59, .10);
+  --green: #6ECB63;
+  --amber: #FF9F43;
+  --red: #FF6B6B;
+  --blue: #5BA4CF;
+  --purple: #C4956A;
   --text: #E8E1D0;
-  --muted: #8a776a;
+  --muted: #B8A99A;
 }
 
 body.light-mode {
@@ -32,13 +32,13 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(ellipse 70% 50% at 15% 10%, rgba(218, 13, 23, .05) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 85% 85%, rgba(218, 85, 19, .04) 0%, transparent 60%);
+  background: radial-gradient(ellipse 70% 50% at 15% 10%, rgba(255, 59, 59, .05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 85%, rgba(255, 159, 67, .04) 0%, transparent 60%);
 }
 
 body.light-mode::before {
-  background: radial-gradient(ellipse 70% 50% at 15% 10%, rgba(218, 13, 23, .06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 85% 85%, rgba(218, 85, 19, .05) 0%, transparent 60%);
+  background: radial-gradient(ellipse 70% 50% at 15% 10%, rgba(255, 59, 59, .06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 85%, rgba(255, 159, 67, .05) 0%, transparent 60%);
 }
 
 @keyframes fadeUp {
