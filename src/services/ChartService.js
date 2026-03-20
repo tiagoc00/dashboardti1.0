@@ -1,4 +1,4 @@
-import { bOpts, BC, TC, FM, GC } from '../utils/chartConfig.js';
+import { bOpts, BC, TC, FM, GC, TXT, CARD, BORDER2 } from '../utils/chartConfig.js';
 import { groupBy, avg, calcCsat } from '../utils/formatters.js';
 
 const killC = (id, chartsObj) => { 
@@ -143,7 +143,7 @@ export const ChartService = {
             responsive: true, 
             maintainAspectRatio: false, 
             cutout: "56%", 
-            plugins: { legend: { position: "bottom", labels: { color: TC, font: { family: FM, size: 11 }, padding: 14 } }, tooltip: { backgroundColor: "var(--card)", borderColor: "var(--border2)", borderWidth: 1, titleColor: "var(--text)", bodyColor: "var(--muted)" } },
+            plugins: { legend: { position: "bottom", labels: { color: TC(), font: { family: FM, size: 11 }, padding: 14 } }, tooltip: { backgroundColor: CARD(), borderColor: BORDER2(), borderWidth: 1, titleColor: TXT(), bodyColor: TC() } },
             onClick: (e, el) => { if (el.length) chartsState.onCsatClick?.(lb[el[0].index]); },
             onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
           }
@@ -182,8 +182,8 @@ export const ChartService = {
     const lo = () => ({ 
       responsive: true, 
       maintainAspectRatio: false, 
-      plugins: { legend: { display: false }, tooltip: { backgroundColor: "var(--card)", borderColor: "var(--border2)", borderWidth: 1, titleColor: "var(--text)", bodyColor: "var(--muted)" } }, 
-      scales: { x: { ticks: { color: TC, font: { size: 10 } }, grid: { color: GC } }, y: { ticks: { color: TC, font: { size: 10 } }, grid: { color: GC } } },
+      plugins: { legend: { display: false }, tooltip: { backgroundColor: CARD(), borderColor: BORDER2(), borderWidth: 1, titleColor: TXT(), bodyColor: TC() } }, 
+      scales: { x: { ticks: { color: TC(), font: { size: 10 } }, grid: { color: GC() } }, y: { ticks: { color: TC(), font: { size: 10 } }, grid: { color: GC() } } },
       onClick: (e, el) => { if (el.length) chartsState.onMonthClick?.(ms[el[0].index]); },
       onHover: (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; }
     });
