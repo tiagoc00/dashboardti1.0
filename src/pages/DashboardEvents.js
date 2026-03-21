@@ -563,4 +563,13 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
       }
     }
   });
+
+  // Show Users List Button
+  document.getElementById("btn-show-users")?.addEventListener("click", () => {
+    const btnUsers = document.querySelector('.tabbtn[data-tab="usuarios"]');
+    if (btnUsers) {
+      btnUsers.click();
+      btnUsers.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
 }

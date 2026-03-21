@@ -92,8 +92,9 @@ export const MainDashboardLayout = () => {
       <!-- KPIS USUARIOS -->
       <section>
         <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Usuários em Destaque</p>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 relative">
           ${KpiCard({ title: 'Total de Usuários', value: '—', sub: 'usuários únicos', idValue: 'k-users', idTrend: 'k-users-trend', colorClass: 'text-purple', borderClass: 'from-purple to-transparent' })}
+          <button id="btn-show-users" title="Ver Lista de Usuários" class="absolute top-2 left-[23%] -translate-x-full z-10 bg-purple/10 border border-purple/30 text-purple text-[9px] uppercase font-mono px-1.5 py-0.5 rounded hover:bg-purple/20 transition-all cursor-pointer opacity-70 hover:opacity-100">Ver Todos</button>
           ${KpiCard({ title: 'Usuário Mais Ativo', value: '—', sub: 'chamados', idValue: 'k-topuser', idSub: 'k-topuser-sub', colorClass: 'text-amber !text-[16px] mt-1.5', borderClass: 'from-amber to-transparent' })}
           ${KpiCard({ title: 'Média por Usuário', value: '—', sub: 'chamados/usuário', idValue: 'k-avguser', colorClass: 'text-cyan', borderClass: 'from-cyan to-transparent' })}
           ${KpiCard({ title: 'Empresa Mais Ativa', value: '—', sub: 'chamados', idValue: 'k-topemp', idSub: 'k-topemp-sub', colorClass: 'text-green !text-[16px] mt-1.5', borderClass: 'from-green to-transparent' })}
