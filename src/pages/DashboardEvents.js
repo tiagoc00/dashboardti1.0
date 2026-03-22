@@ -605,4 +605,132 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
       btnUsers.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   });
+
+  // =============================================
+  // DRAG AND DROP LAYOUT
+  // =============================================
+  const mainContent = document.getElementById("main-content");
+  let draggedItem = null;
+
+  const saveLayout = () => {
+    const sections = [...mainContent.querySelectorAll(".drag-section")];
+    const order = sections.map(s => s.dataset.section);
+    localStorage.setItem("dashboard_layout", JSON.stringify(order));
+  };
+
+  const loadLayout = () => {
+    const saved = localStorage.getItem("dashboard_layout");
+    if (!saved) return;
+    try {
+      const order = JSON.parse(saved);
+      order.forEach(id => {
+        const el = mainContent.querySelector(`[data-section="${id}"]`);
+        if (el) mainContent.appendChild(el);
+      });
+    } catch(e) { console.error("Erro ao carregar layout", e); }
+  };
+
+  mainContent.addEventListener("dragstart", (e) => {
+    if (!e.target.classList.contains("drag-section")) return;
+    draggedItem = e.target;
+    e.target.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+  });
+
+  mainContent.addEventListener("dragend", (e) => {
+    if (!e.target.classList.contains("drag-section")) return;
+    e.target.classList.remove("dragging");
+    mainContent.querySelectorAll(".drag-section").forEach(s => s.classList.remove("drag-over"));
+    saveLayout();
+  });
+
+  mainContent.addEventListener("dragover", (e) => {
+     e.preventDefault();
+     const section = e.target.closest(".drag-section");
+     if (!section || section === draggedItem) return;
+     
+     mainContent.querySelectorAll(".drag-section").forEach(s => s.classList.remove("drag-over"));
+     section.classList.add("drag-over");
+     
+     const rect = section.getBoundingClientRect();
+     const mid = rect.top + rect.height / 2;
+     if (e.clientY < mid) {
+       mainContent.insertBefore(draggedItem, section);
+     } else {
+       mainContent.insertBefore(draggedItem, section.nextSibling);
+     }
+  });
+
+  loadLayout();
+
+  // =============================================
+  // TV MODE (PRESENTATION)
+  // =============================================
+  let tvInterval = null;
+  let tvIndex = 0;
+  const tvSections = ["kpi", "vol", "dist", "users-list", "csat", "monthly"];
+
+  const stopTVMode = () => {
+    clearInterval(tvInterval);
+    tvInterval = null;
+    document.body.classList.remove("tv-mode-active");
+    mainContent.querySelectorAll(".drag-section").forEach(s => s.classList.remove("tv-slide-active"));
+    if (document.fullscreenElement) document.exitFullscreen();
+  };
+
+  const startTVMode = async () => {
+    let controls = document.getElementById("tv-controls");
+    if (!controls) {
+      controls = document.createElement("div");
+      controls.id = "tv-controls";
+      controls.innerHTML = `
+        <button id="tv-prev" class="bg-card border border-border px-3 py-1.5 rounded-lg text-muted hover:text-cyan cursor-pointer">◂</button>
+        <button id="tv-pause" class="bg-card border border-border px-3 py-1.5 rounded-lg text-muted hover:text-cyan cursor-pointer">⏸</button>
+        <button id="tv-next" class="bg-card border border-border px-3 py-1.5 rounded-lg text-muted hover:text-cyan cursor-pointer">▸</button>
+        <button id="tv-exit" class="bg-card border border-red px-3 py-1.5 rounded-lg text-red hover:bg-red/10 cursor-pointer">SAIR ESC</button>
+      `;
+      document.body.appendChild(controls);
+
+      document.getElementById("tv-exit").onclick = stopTVMode;
+      document.getElementById("tv-next").onclick = () => { showSlide(tvIndex + 1); resetTimer(); };
+      document.getElementById("tv-prev").onclick = () => { showSlide(tvIndex - 1); resetTimer(); };
+      document.getElementById("tv-pause").onclick = (e) => {
+        if (tvInterval) { clearInterval(tvInterval); tvInterval = null; e.target.textContent = "▶"; }
+        else { resetTimer(); e.target.textContent = "⏸"; }
+      };
+    }
+
+    const showSlide = (idx) => {
+      tvIndex = (idx + tvSections.length) % tvSections.length;
+      const sectId = tvSections[tvIndex];
+      
+      mainContent.querySelectorAll(".drag-section").forEach(s => s.classList.remove("tv-slide-active"));
+      
+      const target = mainContent.querySelector(`[data-section="${sectId}"]`);
+      if (target) {
+        target.classList.add("tv-slide-active");
+        // Trigger resize for Chart.js
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 50);
+      }
+    };
+
+    const resetTimer = () => {
+      clearInterval(tvInterval);
+      tvInterval = setInterval(() => showSlide(tvIndex + 1), 12000);
+    };
+
+    document.body.classList.add("tv-mode-active");
+    try { await document.documentElement.requestFullscreen(); } catch(e) {}
+    
+    showSlide(0);
+    resetTimer();
+  };
+
+  document.getElementById("btn-tv-mode")?.addEventListener("click", startTVMode);
+
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) stopTVMode();
+  });
 }

@@ -81,9 +81,13 @@ export const Sidebar = () => {
     ` : ''}
 
     <div class="flex flex-col gap-2 relative z-20 pb-4">
-      <p class="font-mono text-[12px] tracking-[1.5px] uppercase text-text font-bold pb-1.5 border-b border-border">Filtros Opcionais</p>
+      <p class="font-mono text-[12px] tracking-[1.5px] uppercase text-text font-bold pb-1.5 border-b border-border">Ações & Utilitários</p>
       
-      <div class="flex flex-col gap-1.5">
+      <button id="btn-tv-mode" class="bg-card border border-border2 text-text rounded-lg px-4 py-[9px] font-mono text-[11px] font-bold cursor-pointer w-full transition-all hover:border-cyan hover:text-cyan flex items-center justify-center gap-2">
+        <span>📺</span> MODO TV (Apresentação)
+      </button>
+
+      <div class="flex flex-col gap-1.5 mt-2">
         <label class="text-[10px] text-muted">Atendente</label>
         <select id="fat" class="bg-card border border-border rounded-md text-text font-sans text-[12px] px-2.5 py-1.5 w-full outline-none focus:border-cyan transition-colors">
           <option value="">Todos</option>

@@ -90,8 +90,10 @@ export const MainDashboardLayout = () => {
       </div>
 
       <!-- KPIS PRINCIPAIS -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ KPIs Principais</p>
+      <section id="sect-kpi" data-section="kpi" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ KPIs Principais
+        </p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           ${KpiCard({ title: 'Total de Chamados', value: '—', sub: 'chamados resolvidos', idValue: 'k-total', idTrend: 'k-total-trend', colorClass: 'text-cyan', borderClass: 'from-cyan to-transparent' })}
           ${KpiCard({ title: 'Tempo Médio Resolução', value: '—', sub: 'por chamado', idValue: 'k-sla', idTrend: 'k-sla-trend', colorClass: 'text-green', borderClass: 'from-green to-transparent' })}
@@ -99,10 +101,12 @@ export const MainDashboardLayout = () => {
           ${KpiCard({ title: 'CSAT Score', value: '—', sub: 'avaliações', idValue: 'k-csat', idSub: 'k-csat-sub', idTrend: 'k-csat-trend', colorClass: 'text-blue', borderClass: 'from-blue to-transparent' })}
         </div>
       </section>
-
+ 
       <!-- KPIS USUARIOS -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Usuários em Destaque</p>
+      <section id="sect-users-kpi" data-section="users-kpi" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Usuários em Destaque
+        </p>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 relative">
           ${KpiCard({ title: 'Total de Usuários', value: '—', sub: 'usuários únicos', idValue: 'k-users', idTrend: 'k-users-trend', colorClass: 'text-purple', borderClass: 'from-purple to-transparent' })}
           <button id="btn-show-users" title="Ver Lista de Usuários" class="absolute top-2 left-[23%] -translate-x-full z-10 bg-purple/10 border border-purple/30 text-purple text-[9px] uppercase font-mono px-1.5 py-0.5 rounded hover:bg-purple/20 transition-all cursor-pointer opacity-70 hover:opacity-100">Ver Todos</button>
@@ -111,10 +115,12 @@ export const MainDashboardLayout = () => {
           ${KpiCard({ title: 'Empresa Mais Ativa', value: '—', sub: 'chamados', idValue: 'k-topemp', idSub: 'k-topemp-sub', colorClass: 'text-green !text-[16px] mt-1.5', borderClass: 'from-green to-transparent' })}
         </div>
       </section>
-
+ 
       <!-- VOLUME CHART -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Volume de Chamados</p>
+      <section id="sect-vol" data-section="vol" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Volume de Chamados
+        </p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 tracking-wide">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
             <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">📊 Chamados por Atendente</p>
@@ -126,10 +132,12 @@ export const MainDashboardLayout = () => {
           </div>
         </div>
       </section>
-
+ 
       <!-- DIA DA SEMANA + HEATMAP -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Distribuição Semanal</p>
+      <section id="sect-dist" data-section="dist" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Distribuição Semanal
+        </p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
              <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">📅 Chamados por Dia da Semana</p>
@@ -141,10 +149,12 @@ export const MainDashboardLayout = () => {
           </div>
         </div>
       </section>
-
+ 
       <!-- USERS LIST -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Chamados por Usuário</p>
+      <section id="sect-users-list" data-section="users-list" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Chamados por Usuário
+        </p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
              <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">🏆 Top 20 Usuários <span id="ulabel" class="text-muted font-normal text-[11px]"></span></p>
@@ -160,10 +170,12 @@ export const MainDashboardLayout = () => {
            <div class="h-[260px] w-full"><canvas id="ch-emp"></canvas></div>
         </div>
       </section>
-
+ 
       <!-- SATISFACAO E SLA -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Satisfação & SLA</p>
+      <section id="sect-csat" data-section="csat" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Satisfação & SLA
+        </p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
             <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">🍩 Distribuição CSAT <span id="csatlabel" class="text-muted font-normal text-[11px]"></span></p>
@@ -175,10 +187,12 @@ export const MainDashboardLayout = () => {
           </div>
         </div>
       </section>
-
+ 
       <!-- EVOLUÇÃO MENSAL -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Evolução Mensal</p>
+      <section id="sect-monthly" data-section="monthly" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Evolução Mensal
+        </p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
           <div class="bg-card border border-border rounded-xl p-5 animate-fade-up">
             <p class="font-mono text-[14px] font-bold text-text mb-4 flex items-center gap-2">📈 Volume Mensal</p>
@@ -190,10 +204,12 @@ export const MainDashboardLayout = () => {
           </div>
         </div>
       </section>
-
+ 
       <!-- TABELA BRUTA -->
-      <section>
-        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">◈ Dados Brutos</p>
+      <section id="sect-table" data-section="table" draggable="true" class="drag-section">
+        <p class="font-mono text-[13px] tracking-[2px] uppercase text-text font-bold mb-3.5 flex items-center gap-2.5 after:content-[''] after:flex-1 after:h-px after:bg-border">
+          <span class="drag-handle cursor-grab active:cursor-grabbing text-muted opacity-50 hover:opacity-100 transition-opacity">⠿</span> ◈ Dados Brutos
+        </p>
         <div class="bg-card border border-border rounded-xl overflow-hidden animate-fade-up">
           <div class="flex items-center justify-between p-[16px_20px] border-b border-border gap-3 flex-wrap bg-card">
             <div class="flex gap-2">

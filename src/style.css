@@ -486,3 +486,85 @@ body.light-mode input:checked + .t-slider {
     size: A4 landscape;
   }
 }
+
+/* ========================================
+   DRAG AND DROP
+   ======================================== */
+.drag-section {
+  position: relative;
+}
+.drag-section.dragging {
+  opacity: 0.3;
+}
+.drag-section.drag-over::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed var(--cyan);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+/* ========================================
+   TV MODE
+   ======================================== */
+body.tv-mode-active {
+  overflow: hidden !important;
+}
+
+body.tv-mode-active aside,
+body.tv-mode-active header,
+body.tv-mode-active #user-modal,
+body.tv-mode-active #admins-modal {
+  display: none !important;
+}
+
+body.tv-mode-active .drag-section {
+  display: none !important;
+}
+
+body.tv-mode-active .drag-section.tv-slide-active {
+  display: block !important;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--bg);
+  padding: 40px 80px;
+  overflow-y: auto;
+  animation: tvFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Adjusting elements inside TV active slide */
+body.tv-mode-active .drag-section.tv-slide-active .drag-handle {
+  display: none;
+}
+
+body.tv-mode-active .drag-section.tv-slide-active p.font-mono {
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: var(--cyan);
+}
+
+#tv-controls {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: none;
+  gap: 12px;
+  z-index: 2000;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+body.tv-mode-active #tv-controls {
+  display: flex;
+}
+
+#tv-controls:hover {
+  opacity: 1;
+}
+
+@keyframes tvFadeIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: scale(1); }
+}
