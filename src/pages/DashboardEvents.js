@@ -90,30 +90,36 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     const state = UIState.get();
     const allCh = state.chamados;
     const allCs = state.satisfacao;
-    const { di, df } = state.filters;
+    const { di, df, cdi, cdf } = state.filters;
 
     if (!allCh.length) { prevPeriodData = null; return; }
 
-    // Calculate the current filtered date range
-    let startDate, endDate;
-    
-    if (di && df) {
-      startDate = parseISO(di);
-      endDate = parseISO(df);
+    let prevStart, prevEnd;
+
+    // Use custom comparison range if BOTH are provided
+    if (cdi && cdf) {
+      prevStart = parseISO(cdi);
+      prevEnd = parseISO(cdf);
     } else {
-      // Use the actual data range
-      const dates = allCh.filter(r => r._dt).map(r => r._dt.getTime());
-      if (!dates.length) { prevPeriodData = null; return; }
-      startDate = new Date(Math.min(...dates));
-      endDate = new Date(Math.max(...dates));
+      // Calculate automatically
+      let startDate, endDate;
+      if (di && df) {
+        startDate = parseISO(di);
+        endDate = parseISO(df);
+      } else {
+        const dates = allCh.filter(r => r._dt).map(r => r._dt.getTime());
+        if (!dates.length) { prevPeriodData = null; return; }
+        startDate = new Date(Math.min(...dates));
+        endDate = new Date(Math.max(...dates));
+      }
+
+      const rangeDays = Math.max(1, Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)));
+      prevEnd = new Date(startDate.getTime() - (1000 * 60 * 60 * 24)); 
+      prevStart = new Date(prevEnd.getTime() - (rangeDays * 1000 * 60 * 60 * 24));
     }
 
-    const rangeDays = Math.max(1, Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)));
-    const prevEnd = new Date(startDate.getTime() - (1000 * 60 * 60 * 24)); // day before start
-    const prevStart = new Date(prevEnd.getTime() - (rangeDays * 1000 * 60 * 60 * 24));
-
     const prevCh = allCh.filter(r => r._dt && r._dt >= prevStart && r._dt <= prevEnd);
-    const prevCs = allCs; // CSAT doesn't have easy date comparison
+    const prevCs = allCs; 
 
     if (!prevCh.length) { prevPeriodData = null; return; }
 
@@ -220,8 +226,8 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
         renderAll();
       },
       onUserClick: (name) => {
-        UIState.update({ filters: { ...UIState.get().filters, usr: name } });
-        renderAll();
+        const state = UIState.get();
+        ChartService.renderUserProfile(name, state.chamados, state.satisfacao, state.charts);
       },
       onEmpClick: (name) => {
         UIState.update({ filters: { ...UIState.get().filters, emp: name } });
@@ -341,7 +347,7 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     }
   });
 
-  ["fat", "fst", "fdi", "fdf"].forEach(id => {
+  ["fat", "fst", "fdi", "fdf", "fcdi", "fcdf"].forEach(id => {
     document.getElementById(id)?.addEventListener("change", e => {
       UIState.update({ filters: { ...UIState.get().filters, [id.replace('f', '')]: e.target.value } });
       TableService.resetPage();
@@ -350,8 +356,8 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
   });
 
   document.getElementById("btn-reset")?.addEventListener("click", () => {
-    ["fat", "fst", "fdi", "fdf"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
-    UIState.update({ filters: { at: "", st: "", di: "", df: "", usr: "", emp: "", dw: null, ms: "", csat: "" } });
+    ["fat", "fst", "fdi", "fdf", "fcdi", "fcdf"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+    UIState.update({ filters: { at: "", st: "", di: "", df: "", cdi: "", cdf: "", usr: "", emp: "", dw: null, ms: "", csat: "" } });
     TableService.resetPage();
     renderAll();
   });
@@ -553,14 +559,41 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     const mainContent = document.getElementById('main-content');
     const sidebar = document.querySelector('aside');
     
-    if (e.target.closest('button, select, input, label, canvas, a, .user-row, .pg-btn, .sortable-header, .export-dropdown')) return;
-    if (e.target.closest('aside, #admins-modal, #delete-data-modal')) return;
+    if (e.target.closest('button, select, input, label, canvas, a, .user-row, .pg-btn, .sortable-header, .export-dropdown, .user-click-cell')) return;
+    if (e.target.closest('aside, #admins-modal, #delete-data-modal, #user-modal')) return;
 
     if (mainContent && mainContent.contains(e.target)) {
       const { filters: f } = UIState.get();
       if (f.at || f.st || f.di || f.df || f.usr || f.emp || f.dw !== null || f.ms || f.csat) {
         document.getElementById("btn-reset")?.click();
       }
+    }
+  });
+
+  // User Modal Events
+  document.getElementById("btn-close-user")?.addEventListener("click", () => {
+    document.getElementById("user-modal").classList.add("hidden");
+    document.getElementById("user-modal").classList.remove("flex");
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.getElementById("user-modal")?.classList.add("hidden");
+      document.getElementById("user-modal")?.classList.remove("flex");
+      document.getElementById("admins-modal")?.classList.add("hidden");
+      document.getElementById("admins-modal")?.classList.remove("flex");
+      document.getElementById("delete-data-modal")?.classList.add("hidden");
+      document.getElementById("delete-data-modal")?.classList.remove("flex");
+    }
+  });
+
+  // Table User Click (Delegated)
+  document.getElementById("tblbody")?.addEventListener("click", (e) => {
+    const cell = e.target.closest(".user-click-cell");
+    if (cell) {
+      const name = cell.dataset.user;
+      const state = UIState.get();
+      ChartService.renderUserProfile(name, state.chamados, state.satisfacao, state.charts);
     }
   });
 

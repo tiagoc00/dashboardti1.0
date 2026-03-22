@@ -56,6 +56,17 @@ export const MainDashboardLayout = () => {
             </div>
           </div>
 
+          <div class="flex items-center gap-4 bg-card border border-border2 rounded-lg px-3 py-1.5 shadow-sm">
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] text-amber font-mono uppercase tracking-[1px] font-bold">🆚 Comparar</label>
+              <input type="date" id="fcdi" title="Início do período de comparação" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+            </div>
+            <div class="w-px h-4 bg-border2"></div>
+            <div class="flex items-center gap-2">
+              <input type="date" id="fcdf" title="Fim do período de comparação" class="bg-transparent border-none text-text font-sans text-[11px] outline-none cursor-pointer" />
+            </div>
+          </div>
+
           <!-- EXPORT DROPDOWN -->
           <div class="export-dropdown">
             <button id="btn-export-toggle" class="bg-card border border-border2 text-text rounded-lg px-3 py-1.5 font-mono text-[11px] cursor-pointer transition-all hover:border-cyan hover:text-cyan flex items-center gap-1.5 shadow-sm">

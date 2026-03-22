@@ -1,5 +1,6 @@
 import { Sidebar } from '../components/organisms/Sidebar.js';
 import { MainDashboardLayout } from '../components/organisms/MainDashboardLayout.js';
+import { UserModal } from '../components/organisms/UserModal.js';
 import { AdminModal } from '../components/organisms/AdminModal.js';
 import { DeleteDataModal } from '../components/organisms/DeleteDataModal.js';
 
@@ -14,5 +15,6 @@ export const DashboardTemplate = () => `
     <!-- MODALS -->
     ${AdminModal()}
     ${DeleteDataModal()}
+    ${UserModal()}
   </div>
 `;

@@ -153,7 +153,15 @@ export const TableService = {
     });
 
     // Render body
-    if (tab === "satisfacao") {
+    if (tab === "usuarios") {
+      bodyEl.innerHTML = pageRows.map(r => `<tr class="border-b border-border transition-colors hover:bg-white/5">${cols.map(c => {
+        const v = r[c]||"";
+        if (c === "Usuário") {
+          return `<td class="p-[8px_13px] text-cyan font-bold cursor-pointer hover:underline user-click-cell" data-user="${escapeHTML(v)}">${escapeHTML(v)}</td>`;
+        }
+        return `<td class="p-[8px_13px] text-text whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis" title="${escapeHTML(v)}">${escapeHTML(v)}</td>`;
+      }).join("")}</tr>`).join("");
+    } else if (tab === "satisfacao") {
       bodyEl.innerHTML = pageRows.map(r => `<tr class="border-b border-border transition-colors hover:bg-white/5">${cols.map(c => {
         const v = r[c]||"";
         if (c === "Avaliação") {
@@ -161,10 +169,19 @@ export const TableService = {
           const bg = val === "muito-satisfeito" ? "bg-green/15 text-green" : val === "satisfeito" ? "bg-cyan/15 text-cyan" : val === "indiferente" ? "bg-amber/15 text-amber" : "bg-red/15 text-red";
           return `<td class="p-[8px_13px] whitespace-nowrap"><span class="inline-block p-[2px_8px] rounded-full text-[10px] font-bold font-mono ${bg}">${escapeHTML(v)}</span></td>`;
         }
+        if (c === "Contato") {
+            return `<td class="p-[8px_13px] text-cyan cursor-pointer hover:underline user-click-cell" data-user="${escapeHTML(v)}">${escapeHTML(v)}</td>`;
+        }
         return `<td class="p-[8px_13px] text-text whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis" title="${escapeHTML(v)}">${escapeHTML(v)}</td>`;
       }).join("")}</tr>`).join("");
     } else {
-      bodyEl.innerHTML = pageRows.map(r => `<tr class="border-b border-border transition-colors hover:bg-white/5">${cols.map(c => `<td class="p-[8px_13px] text-text whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis" title="${escapeHTML(String(r[c]??''))}">${escapeHTML(String(r[c]??''))}</td>`).join("")}</tr>`).join("");
+      bodyEl.innerHTML = pageRows.map(r => `<tr class="border-b border-border transition-colors hover:bg-white/5">${cols.map(c => {
+          const v = String(r[c]??'');
+          if (c === "Contato") {
+              return `<td class="p-[8px_13px] text-cyan cursor-pointer hover:underline user-click-cell" data-user="${escapeHTML(v)}">${escapeHTML(v)}</td>`;
+          }
+          return `<td class="p-[8px_13px] text-text whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis" title="${escapeHTML(v)}">${escapeHTML(v)}</td>`;
+      }).join("")}</tr>`).join("");
     }
 
     // Render footer with pagination

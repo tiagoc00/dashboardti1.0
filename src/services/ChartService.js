@@ -1,5 +1,5 @@
 import { bOpts, BC, TC, FM, GC, TXT, CARD, BORDER2 } from '../utils/chartConfig.js';
-import { groupBy, avg, calcCsat } from '../utils/formatters.js';
+import { groupBy, avg, calcCsat, fmtMin } from '../utils/formatters.js';
 
 const killC = (id, chartsObj) => { 
   if (chartsObj[id]) { chartsObj[id].destroy(); delete chartsObj[id]; } 
@@ -333,5 +333,82 @@ export const ChartService = {
     `;
 
     container.innerHTML = html;
+  },
+
+  renderUserProfile: (userName, allCh, allCs, chartsState) => {
+    const userCh = allCh.filter(r => r["Contato"] === userName);
+    const userCs = allCs.filter(r => r["Contato"] === userName);
+    
+    if (!userCh.length) return;
+
+    // Header info
+    document.getElementById("u-modal-name").textContent = userName;
+    document.getElementById("u-modal-emp").textContent = userCh[0]?.["Empresa"] || "Sem empresa cadastrada";
+
+    // KPIs
+    const total = userCh.length;
+    const tm = avg(userCh.map(r => r._tm).filter(v => v != null));
+    const fm = avg(userCh.map(r => r._fm).filter(v => v != null));
+    const sc = calcCsat(userCs);
+
+    document.getElementById("u-k-total").textContent = total;
+    document.getElementById("u-k-sla").textContent = fmtMin(tm);
+    document.getElementById("u-k-fila").textContent = fmtMin(fm);
+    document.getElementById("u-k-csat").textContent = userCs.length ? `${sc}%` : "—";
+    
+    // Colors for KPIs
+    document.getElementById("u-k-sla").className = `font-mono text-[24px] font-bold ${tm < 60 ? "text-green" : tm < 120 ? "text-amber" : "text-red"}`;
+    document.getElementById("u-k-fila").className = `font-mono text-[24px] font-bold ${fm < 10 ? "text-green" : fm < 30 ? "text-amber" : "text-red"}`;
+
+    // Category chart
+    killC("uSetor", chartsState);
+    const bySetor = groupBy(userCh, "_st");
+    const tst = Object.entries(bySetor).sort((a,b)=>b[1].length-a[1].length).slice(0, 10);
+    const ctxSetor = document.getElementById("u-ch-setor")?.getContext("2d");
+    if(ctxSetor) {
+      chartsState.uSetor = new Chart(ctxSetor, {
+        type: "bar",
+        data: { labels: tst.map(([n])=>n), datasets: [{ data: tst.map(([,a])=>a.length), backgroundColor: "rgba(0, 229, 255, 0.6)", borderWidth: 0, borderRadius: 4 }] },
+        options: { ...bOpts(), indexAxis: "y", plugins: { ...bOpts().plugins, legend: { display: false } } }
+      });
+    }
+
+    // Monthly trend chart
+    killC("uTrend", chartsState);
+    const byMonth = groupBy(userCh, "_ms");
+    const ms = Object.keys(byMonth).filter(m=>m!=="—").sort();
+    const ctxTrend = document.getElementById("u-ch-trend")?.getContext("2d");
+    if(ctxTrend) {
+      chartsState.uTrend = new Chart(ctxTrend, {
+        type: "line",
+        data: { labels: ms, datasets: [{ data: ms.map(m=>byMonth[m].length), borderColor: "#7c4dff", backgroundColor: "rgba(124, 77, 255, 0.1)", fill: true, tension: 0.3, pointRadius: 4 }] },
+        options: { 
+          ...bOpts(), 
+          plugins: { ...bOpts().plugins, legend: { display: false } },
+          scales: { x: { ticks: { color: TC(), font: { size: 10 } }, grid: { color: GC() } }, y: { ticks: { color: TC(), font: { size: 10 } }, grid: { color: GC() } } }
+        }
+      });
+    }
+
+    // Recent calls table
+    const recent = [...userCh].sort((a,b) => (b._dt?.getTime()||0) - (a._dt?.getTime()||0)).slice(0, 10);
+    document.getElementById("u-tbl-calls").innerHTML = recent.map(r => `
+      <tr class="border-b border-border/50 hover:bg-surface/30 transition-colors">
+        <td class="p-3 text-muted font-mono">${r["Abertura"] ? r["Abertura"].split(" ")[0] : "—"}</td>
+        <td class="p-3">
+          <div class="font-bold text-text">${r["Assunto"] || "Sem assunto"}</div>
+          <div class="text-muted text-[10px] uppercase font-mono">${r._st}</div>
+        </td>
+        <td class="p-3 text-text">${r["Atendente"] || "—"}</td>
+        <td class="p-3 text-right">
+          <span class="px-2 py-0.5 rounded-full bg-surface border border-border text-[9px] font-bold uppercase text-muted">${r["Situação"] || "—"}</span>
+        </td>
+      </tr>
+    `).join("");
+
+    // Show modal
+    const modal = document.getElementById("user-modal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
   }
 };

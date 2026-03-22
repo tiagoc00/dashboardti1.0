@@ -11,7 +11,7 @@ let state = {
   user: null,
   isAdmin: false,
   theme: localStorage.getItem("theme") === "light" ? "light" : "dark",
-  filters: { at: "", st: "", di: "", df: "", usr: "", emp: "", dw: null, ms: "", csat: "" },
+  filters: { at: "", st: "", di: "", df: "", cdi: "", cdf: "", usr: "", emp: "", dw: null, ms: "", csat: "" },
   charts: {}
 };
 
