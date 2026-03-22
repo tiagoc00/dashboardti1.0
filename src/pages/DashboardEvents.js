@@ -585,6 +585,12 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
       document.getElementById("delete-data-modal")?.classList.add("hidden");
       document.getElementById("delete-data-modal")?.classList.remove("flex");
     }
+
+    // Navegação do MODO TV (Setas)
+    if (document.body.classList.contains("tv-mode-active")) {
+      if (e.key === "ArrowRight") document.getElementById("tv-next")?.click();
+      if (e.key === "ArrowLeft")  document.getElementById("tv-prev")?.click();
+    }
   });
 
   // Table User Click (Delegated)
