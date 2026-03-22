@@ -12,3 +12,9 @@ export const parseDate = (str) => {
   const m = String(str||"").match(/(\d{2})\/(\d{2})\/(\d{4})/); 
   return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null; 
 };
+
+export const parseISO = (str) => {
+  if (!str) return null;
+  const p = str.split("-");
+  return p.length === 3 ? new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])) : null;
+};

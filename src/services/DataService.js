@@ -1,5 +1,5 @@
 // src/services/DataService.js
-import { timeToMin, cleanSt, parseDate, parseMes } from '../utils/formatters.js';
+import { timeToMin, cleanSt, parseDate, parseMes, parseISO } from '../utils/formatters.js';
 import { UIState } from './UIState.js';
 
 export const DataService = {
@@ -28,8 +28,8 @@ export const DataService = {
     
     if(at) { ch = ch.filter(r => r["Atendente"] === at); cs = cs.filter(r => r["Atendente"] === at); }
     if(st) ch = ch.filter(r => r._st === st);
-    if(di) ch = ch.filter(r => r._dt && r._dt >= new Date(di));
-    if(df) ch = ch.filter(r => r._dt && r._dt <= new Date(df));
+    if(di) { const d = parseISO(di); ch = ch.filter(r => r._dt && r._dt >= d); }
+    if(df) { const d = parseISO(df); ch = ch.filter(r => r._dt && r._dt <= d); }
     if(usr) ch = ch.filter(r => r["Contato"] === usr);
     if(emp) ch = ch.filter(r => r["Empresa"] === emp);
     if(dw !== null && dw !== "") ch = ch.filter(r => r._dw === Number(dw));

@@ -3,7 +3,7 @@ import { DataService } from '../services/DataService.js';
 import { ChartService } from '../services/ChartService.js';
 import { TableService } from '../services/TableService.js';
 import { ExportService } from '../services/ExportService.js';
-import { fmtMin, avg, calcCsat, csatClr, groupBy } from '../utils/formatters.js';
+import { fmtMin, avg, calcCsat, csatClr, groupBy, parseISO } from '../utils/formatters.js';
 import { animateKpiValue, renderTrend, renderTrendInverse } from '../utils/animations.js';
 
 const readFile = (file) => new Promise((res, rej) => {
@@ -98,8 +98,8 @@ export function attachDashboardEvents(fbService, showLoading, hideLoading, toast
     let startDate, endDate;
     
     if (di && df) {
-      startDate = new Date(di);
-      endDate = new Date(df);
+      startDate = parseISO(di);
+      endDate = parseISO(df);
     } else {
       // Use the actual data range
       const dates = allCh.filter(r => r._dt).map(r => r._dt.getTime());
