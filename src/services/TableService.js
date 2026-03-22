@@ -77,7 +77,7 @@ const renderSortableHeader = (cols) => {
     const isActive = currentSort.col === c;
     const arrow = isActive ? (currentSort.dir === 'asc' ? '▲' : '▼') : '⇅';
     const activeClass = isActive ? 'active' : '';
-    return `<th class="sortable-header bg-surface p-[9px_13px] text-left font-mono text-[10px] tracking-[1px] uppercase text-muted border-b border-border sticky top-0 whitespace-nowrap" data-col="${c}">${escapeHTML(c)} <span class="sort-indicator ${activeClass}">${arrow}</span></th>`;
+    return `<th class="sortable-header bg-surface p-[9px_13px] text-left font-mono text-[10px] tracking-[1px] uppercase text-muted border-b border-border sticky top-0 whitespace-nowrap" data-col="${escapeHTML(c)}">${escapeHTML(c)} <span class="sort-indicator ${activeClass}">${arrow}</span></th>`;
   }).join("")}</tr>`;
 };
 

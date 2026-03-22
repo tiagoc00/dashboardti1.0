@@ -13,19 +13,15 @@ service cloud.firestore {
       return request.auth.token.email.split('@')[0].lower();
     }
 
-    // Verifica se o usuário é o admin mestre (hardcoded como fallback)
-    function isMasterAdmin() {
-      return username() == 'admin' || username() == 'tiago.cabral';
-    }
-
-    // Verifica se o usuário tem documento na coleção 'admins' do Firestore
+    // Checks if the user has a document in the 'admins' collection in Firestore
     function isFirestoreAdmin() {
+      // The document ID must be the username (part before @)
       return exists(/databases/$(database)/documents/admins/$(username()));
     }
 
-    // Combinação: é admin mestre OU tem documento em /admins/
+    // Combination: must be authenticated AND have a document in /admins/
     function isAdmin() {
-      return isAuth() && (isMasterAdmin() || isFirestoreAdmin());
+      return isAuth() && isFirestoreAdmin();
     }
 
     // ─── Coleção: chamados ─────────────────────────────────────────────────
@@ -43,13 +39,9 @@ service cloud.firestore {
     }
 
     // ─── Coleção: admins ───────────────────────────────────────────────────
-    // Somente admins podem ler a lista de admins e conceder/revogar acesso.
-    // Leitores comuns NÃO enxergam esta coleção.
+    // Somente admins podem ver quem mais é admin ou gerenciar acessos.
     match /admins/{userId} {
-      allow read:   if isAdmin();
-      allow create: if isAdmin();
-      allow delete: if isAdmin();
-      allow update: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
     // ─── Bloqueio padrão ──────────────────────────────────────────────────

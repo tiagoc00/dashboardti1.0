@@ -3,11 +3,10 @@
  *
  * Responsabilidades:
  *   - Inicializa o app Firebase com as credenciais do projeto
- *   - Expõe um objeto global window.__FB com todos os serviços
- *     (Firestore + Auth) prontos para uso no main.js
- *   - Dispara o evento "firebase-ready" quando tudo estiver pronto
+ *   - Exporta o objeto 'fb' com os serviços (Firestore + Auth)
+ *   - Mantém as instâncias seguras dentro do escopo do módulo
  *
- * Serviços expostos via window.__FB:
+ * Serviços expostos via export const fb:
  *   .db            → instância do Firestore
  *   .auth          → instância do Auth
  *   .collection()  → referência de coleção Firestore
@@ -21,7 +20,7 @@
  */
 
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, writeBatch, doc, setDoc, getDoc }
+import { getFirestore, collection, getDocs, writeBatch, doc, setDoc, getDoc, deleteDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -39,14 +38,12 @@ const app  = initializeApp(firebaseConfig);
 const db   = getFirestore(app);
 const auth = getAuth(app);
 
-// Expoe tudo via objeto unico no window — mais confiavel que atribuicoes separadas
-window.__FB = {
+// Exporta a interface do Firebase em vez de expor via objeto global no window
+export const fb = {
   db, auth,
-  collection, getDocs, writeBatch, doc, setDoc, getDoc,
+  collection, getDocs, writeBatch, doc, setDoc, getDoc, deleteDoc,
   signIn:      (email, pass) => signInWithEmailAndPassword(auth, email, pass),
   createUser:  (email, pass) => createUserWithEmailAndPassword(auth, email, pass),
   signOut:     ()            => signOut(auth),
   onAuth:      (cb)          => onAuthStateChanged(auth, cb),
 };
-
-window.dispatchEvent(new Event("firebase-ready"));

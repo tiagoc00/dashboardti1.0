@@ -79,15 +79,4 @@ const initApp = () => {
     });
 };
 
-if (window.__FB) {
-  initApp();
-} else {
-  window.addEventListener('firebase-ready', initApp);
-}
-
-setTimeout(() => {
-  if (!window.__FB) {
-    hideLoading();
-    document.getElementById('root').innerHTML = '<div class="text-red p-10 text-center font-mono text-sm">Erro: Firebase SDK demorou muito para carregar. Verifique a internet e desative bloqueadores de anúncios.</div>';
-  }
-}, 15000);
+initApp();

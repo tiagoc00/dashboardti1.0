@@ -1,7 +1,9 @@
 // src/services/FirebaseService.js
+import { fb } from '../../js/firebase.js';
+
 export class FirebaseService {
   constructor() {
-    this.fb = window.__FB;
+    this.fb = fb;
   }
 
   isReady() {
@@ -25,7 +27,6 @@ export class FirebaseService {
   }
 
   async isAdmin(email) {
-    if (email === "admin" || email === "tiago.cabral") return true;
     try {
       const doc = await this.fb.getDoc(this.fb.doc(this.fb.db, "admins", email));
       return doc.exists();
